@@ -1,0 +1,4 @@
+# default deny
+**/*
+# white list
+!package.json

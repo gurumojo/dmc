@@ -2,3 +2,4 @@
 **/*
 # white list
 !package.json
+!server.js

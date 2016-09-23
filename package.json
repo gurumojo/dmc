@@ -8,6 +8,11 @@
   },
   "main": "index.js",
   "scripts": {
+    "log": "bin/dmc -f",
+    "query": "bin/dmc -q",
+    "restart": "bin/dmc -r",
+    "start": "bin/dmc -a",
+    "stop": "bin/dmc -d",
     "test": "lint && unit"
   },
   "author": "theguy@gurumojo.net",

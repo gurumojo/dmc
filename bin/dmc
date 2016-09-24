@@ -2,6 +2,52 @@
 #
 # Docker Management Console
 ########################################################################
+build() {
+	cd "service/$IMAGE" && docker build --rm -t "$IMAGE:$TAG" .
+}
+
+drop() {
+	docker kill "$CONTAINER"
+	docker rm -f "$CONTAINER"
+}
+
+follow() {
+	docker logs --tail 0 -f "$CONTAINER"
+}
+
+purge() {
+	drop "$CONTAINER"
+	docker rmi -f $(docker images -a | grep "$IMAGE" | awk '{print $3}')
+	docker rmi -f $(docker images -a | grep '<none>' | awk '{print $3}')
+	docker volume rm "$VOLUME"
+}
+
+query() {
+	echo
+	docker info
+	echo
+	docker images -a
+	echo
+	docker volume ls
+	echo
+	docker ps -a
+	echo
+}
+
+reset() {
+	drop
+	start
+}
+
+shell() {
+	docker exec -it "$CONTAINER" bash
+}
+
+start() {
+	docker run --name="$CONTAINER" -d -v "$VOLUME":/opt/gurumojo -p 80:8080 "$IMAGE:$TAG"
+}
+
+
 while [ "$#" -gt 0 ]; do
 	case "$1" in
 		build|-b|--build) COMMAND=build; shift 1;;
@@ -16,17 +62,15 @@ while [ "$#" -gt 0 ]; do
 
 		-c) CONTAINER="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
 		-i) IMAGE="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
-		-s) SERVICE="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
 		-t) TAG="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
 		-v) VOLUME="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
 
 		--container=*) CONTAINER="${1#*=}"; shift 1;;
 		--image=*) IMAGE="${1#*=}"; shift 1;;
-		--service=*) SERVICE="${1#*=}"; shift 1;;
 		--tag=*) TAG="${1#*=}"; shift 1;;
 		--volume=*) VOLUME="${1#*=}"; shift 1;;
 
-		--container|--image|--service|--tag|--volume) echo "$1 requires an argument" >&2; exit 1;;
+		--container|--image|--tag|--volume) echo "$1 requires an argument" >&2; exit 1;;
 		-*) echo "unknown option: $1" >&2; exit 1;;
 		*) echo "unknown argument: $1" >&2; exit 1;;
 	esac
@@ -35,83 +79,42 @@ done
 [ -z "$COMMAND" ] && COMMAND=help
 [ -z "$CONTAINER" ] && CONTAINER=core
 [ -z "$IMAGE" ] && IMAGE=gurumojo
-[ -z "$SERVICE" ] && SERVICE=mock
 [ -z "$TAG" ] && TAG=latest
-[ -z "$VOLUME" ] && VOLUME=storage
-
-drop() {
-	docker kill $1
-	docker rm -f $1
-}
+[ -z "$VOLUME" ] && VOLUME="${IMAGE}-${CONTAINER}"
 
 case "$COMMAND" in
-	build)
-		cd $SERVICE && docker build --rm -t $IMAGE:$TAG .
-	;;
-
-	drop)
-		drop $CONTAINER &>/dev/null
-	;;
-
-	follow)
-		docker logs --tail 0 -f $CONTAINER
-	;;
-
-	purge)
-		drop $CONTAINER &>/dev/null
-		docker rmi -f $(docker images -a | grep '<none>' | awk '{print $3}') 2>/dev/null
-	;;
-
-	query)
-		echo
-		docker info
-		echo
-		docker images -a
-		echo
-		docker ps -a
-		echo
-	;;
-
-	reset)
-		drop $CONTAINER &>/dev/null
-		docker run --name=$CONTAINER -d -v $VOLUME:/opt/gurumojo -p 80:8080 $IMAGE:$TAG
-	;;
-
-	shell)
-		docker exec -it $CONTAINER bash
-	;;
-
-	start)
-		docker run --name=$CONTAINER -d -v $VOLUME:/opt/gurumojo -p 80:8080 $IMAGE:$TAG
-	;;
-
-	help)
-	;&
+	build) build ;;
+	drop) drop ;;
+	follow) follow ;;
+	purge) purge ;;
+	query) query ;;
+	reset) reset ;;
+	shell) shell ;;
+	start) start ;;
+	help) ;&
 	*)
 		echo
 		echo "Usage:"
 		echo "	# $0 [ -a | -b | -d | -e | -f | -h | -p | -q | -r ] \\"
 		echo "	>	[ -c <...> | --container=<...> ] \\"
 		echo "	>	[ -i <...> | --image=<...> ] \\"
-		echo "	>	[ -s <...> | --service=<...> ] \\"
 		echo "	>	[ -t <...> | --tag=<...> ] \\"
 		echo "	>	[ -v <...> | --volume=<...> ]"
 		echo
 		echo "Commands:"
-		echo "	-a 	--start		activate a named mount container"
-		echo "	-b 	--build		create a tagged mount image"
-		echo "	-d 	--drop		disable a named mount container"
+		echo "	-a 	--start		activate a named container"
+		echo "	-b 	--build		create a tagged image"
+		echo "	-d 	--drop		disable a named container"
 		echo "	-e 	--shell		execute bash on a container"
 		echo "	-f 	--follow	print logs from a container"
 		echo "	-h 	--help		show this usage information"
-		echo "	-p 	--purge		destroy a named mount container"
+		echo "	-p 	--purge		destroy a named container"
 		echo "	-q 	--query		show images and containers"
-		echo "	-r 	--reset		replace a named mount container"
+		echo "	-r 	--reset		replace a named container"
 		echo
 		echo "Options:"
 		echo "	-c	--container	$CONTAINER"
 		echo "	-i	--image		$IMAGE"
-		echo "	-s	--service	$SERVICE"
 		echo "	-t	--tag		$TAG"
 		echo "	-v	--volume	$VOLUME"
 		echo

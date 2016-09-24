@@ -18,7 +18,7 @@ follow() {
 purge() {
 	drop "$CONTAINER"
 	docker rmi -f $(docker images -a | grep "$IMAGE" | awk '{print $3}')
-	docker rmi -f $(docker images -a | grep '<none>' | awk '{print $3}')
+	#docker rmi -f $(docker images -a | grep '<none>' | awk '{print $3}')
 	docker volume rm "$VOLUME"
 }
 
@@ -44,7 +44,7 @@ shell() {
 }
 
 start() {
-	docker run --name="$CONTAINER" -d -v "$VOLUME":/opt/gurumojo -p 80:8080 "$IMAGE:$TAG"
+	docker run --name="$CONTAINER" -d -v "$VOLUME":/opt/gurumojo -p 80:8000 "$IMAGE:$TAG"
 }
 
 
@@ -83,12 +83,12 @@ done
 [ -z "$VOLUME" ] && VOLUME="${IMAGE}-${CONTAINER}"
 
 case "$COMMAND" in
-	build) build ;;
-	drop) drop ;;
+	build) build 2>/dev/null ;;
+	drop) drop 2>/dev/null ;;
 	follow) follow ;;
-	purge) purge ;;
+	purge) purge 2>/dev/null ;;
 	query) query ;;
-	reset) reset ;;
+	reset) reset 2>/dev/null ;;
 	shell) shell ;;
 	start) start ;;
 	help) ;&

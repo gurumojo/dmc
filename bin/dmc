@@ -2,36 +2,103 @@
 #
 # Docker Management Console
 ########################################################################
+
 build() {
-	cd "service/$IMAGE" && docker build --rm -t "$IMAGE:$TAG" .
+	if [ -n "$IMAGE" ]; then
+		if [ "$IMAGE" == gurumojo ]; then
+			initialize
+		elif [ "$IMAGE" != base ] && [ "$IMAGE" != template ]; then
+			register
+		else
+			echo "WTF?!?"
+		fi
+	else
+		echo 'Error: $IMAGE is required'
+		exit 1
+	fi
 }
 
 drop() {
-	docker kill "$CONTAINER"
-	docker rm -f "$CONTAINER"
+	if [ -n "$CONTAINER" ]; then
+		docker kill "$CONTAINER"
+		docker rm -f "$CONTAINER"
+	else
+		echo 'Error: $CONTAINER is required'
+		exit 1
+	fi
 }
 
 follow() {
-	docker logs --tail 0 -f "$CONTAINER"
+	if [ -n "$CONTAINER" ]; then
+		docker logs --tail 0 -f "$CONTAINER"
+	else
+		echo 'Error: $CONTAINER is required'
+		exit 1
+	fi
+}
+
+initialize() {
+	if [ -n "$IMAGE" ] && [ -n "$TAG" ]; then
+		cd service/base
+		mv Dockerfile tmp
+		sed -e "s;\(GURUMOJO=\)[a-z]*;\1$TAG;" < tmp > Dockerfile
+		docker build --rm -t "$IMAGE:$TAG" .
+		mv tmp Dockerfile
+	else
+		echo 'Error: $IMAGE and $TAG are required'
+		exit 1
+	fi
 }
 
 purge() {
-	drop "$CONTAINER"
-	docker rmi -f $(docker images -a | grep "$IMAGE" | awk '{print $3}')
-	#docker rmi -f $(docker images -a | grep '<none>' | awk '{print $3}')
-	docker volume rm "$VOLUME"
+	if [ -n "$CONTAINER" ]; then
+		drop "$CONTAINER"
+	fi
+	if [ -n "$IMAGE" ]; then
+		if [ "$IMAGE" != gurumojo ]; then
+			docker rmi -f $(docker images -a | grep "$IMAGE" | awk '{print $3}')
+		fi
+	fi
+	if [ -n "$VOLUME" ]; then
+		docker volume rm "$VOLUME"
+	fi
+	docker rmi -f $(docker images -a | grep '<none>' | awk '{print $3}')
 }
 
 query() {
+	if [ -n "$VERBOSE" ]; then
+		docker info
+	fi
 	echo
-	docker info
-	echo
-	docker images -a
+	if [ -n "$VERBOSE" ]; then
+		docker images -a
+	else
+		docker images
+	fi
 	echo
 	docker volume ls
+	if [ -n "$VOLUME" ]; then
+		docker volume inspect "$VOLUME"
+	fi
 	echo
-	docker ps -a
+	if [ -n "$VERBOSE" ]; then
+		docker ps -a
+	else
+		docker ps
+	fi
 	echo
+}
+
+register() {
+	if [ -n "$IMAGE" ] && [ "$TAG" ]; then
+		mkdir -p "service/$IMAGE"
+		cp service/template/* "service/$IMAGE/"
+		sed -e "s;\(gurumojo:\)[a-z]*;\1$TAG;" < service/template/Dockerfile > "service/$IMAGE/Dockerfile"
+		cd "service/$IMAGE" && docker build --rm -t "$IMAGE:$TAG" .
+	else
+		echo 'Error: $IMAGE and $TAG are required'
+		exit 1
+	fi
 }
 
 reset() {
@@ -40,11 +107,21 @@ reset() {
 }
 
 shell() {
-	docker exec -it "$CONTAINER" bash
+	if [ -n "$CONTAINER" ]; then
+		docker exec -it "$CONTAINER" bash
+	else
+		echo 'Error: $CONTAINER is required'
+		exit 1
+	fi
 }
 
 start() {
-	docker run --name="$CONTAINER" -d -v "$VOLUME":/opt/gurumojo -p 80:8000 "$IMAGE:$TAG"
+	if [ -n "$CONTAINER" ] && [ -n "$IMAGE" ] && [ -n "$PORT" ] && [ -n "$TAG" ] && [ -n "$VOLUME" ]; then
+		docker run --name="$CONTAINER" -d -v "$VOLUME":/opt/gurumojo -p "$PORT:80" "$IMAGE:$TAG"
+	else
+		echo 'Error: $CONTAINER, $IMAGE, $PORT, $TAG, $VOLUME are required'
+		exit 1
+	fi
 }
 
 
@@ -54,7 +131,7 @@ while [ "$#" -gt 0 ]; do
 		drop|-d|--drop) COMMAND=drop; shift 1;;
 		follow|-f|--follow) COMMAND=follow; shift 1;;
 		help|-h|--help) COMMAND=help; shift 1;;
-		purge|-p|--purge) COMMAND=purge; shift 1;;
+		purge|-x|--purge) COMMAND=purge; shift 1;;
 		query|-q|--query) COMMAND=query; shift 1;;
 		reset|-r|--reset) COMMAND=reset; shift 1;;
 		shell|-e|--shell) COMMAND=shell; shift 1;;
@@ -62,6 +139,7 @@ while [ "$#" -gt 0 ]; do
 
 		-c) CONTAINER="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
 		-i) IMAGE="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
+		-p) PORT="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
 		-t) TAG="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
 		-v) VOLUME="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
 
@@ -70,53 +148,57 @@ while [ "$#" -gt 0 ]; do
 		--tag=*) TAG="${1#*=}"; shift 1;;
 		--volume=*) VOLUME="${1#*=}"; shift 1;;
 
+		--verbose) VERBOSE=true; shift 1;;
+
 		--container|--image|--tag|--volume) echo "$1 requires an argument" >&2; exit 1;;
 		-*) echo "unknown option: $1" >&2; exit 1;;
 		*) echo "unknown argument: $1" >&2; exit 1;;
 	esac
 done
 
-[ -z "$COMMAND" ] && COMMAND=help
-[ -z "$CONTAINER" ] && CONTAINER=core
-[ -z "$IMAGE" ] && IMAGE=gurumojo
-[ -z "$TAG" ] && TAG=latest
-[ -z "$VOLUME" ] && VOLUME="${IMAGE}-${CONTAINER}"
+
+if [ -n "$VERBOSE" ]; then
+	echo
+	echo "Docker Management Console"
+fi
 
 case "$COMMAND" in
-	build) build 2>/dev/null ;;
-	drop) drop 2>/dev/null ;;
+	build) build ;;
+	drop) [ -n "$VERBOSE" ] && drop || drop 2>/dev/null ;;
 	follow) follow ;;
-	purge) purge 2>/dev/null ;;
+	purge) [ -n "$VERBOSE" ] && purge || purge 2>/dev/null ;;
 	query) query ;;
-	reset) reset 2>/dev/null ;;
+	reset) [ -n "$VERBOSE" ] && reset || reset 2>/dev/null ;;
 	shell) shell ;;
 	start) start ;;
 	help) ;&
 	*)
 		echo
 		echo "Usage:"
-		echo "	# $0 [ -a | -b | -d | -e | -f | -h | -p | -q | -r ] \\"
-		echo "	>	[ -c <...> | --container=<...> ] \\"
-		echo "	>	[ -i <...> | --image=<...> ] \\"
-		echo "	>	[ -t <...> | --tag=<...> ] \\"
-		echo "	>	[ -v <...> | --volume=<...> ]"
+		echo "	# $0 <command> [ <option> [ <option> [...] ] ]"
 		echo
-		echo "Commands:"
-		echo "	-a 	--start		activate a named container"
-		echo "	-b 	--build		create a tagged image"
-		echo "	-d 	--drop		disable a named container"
-		echo "	-e 	--shell		execute bash on a container"
-		echo "	-f 	--follow	print logs from a container"
-		echo "	-h 	--help		show this usage information"
-		echo "	-p 	--purge		destroy a named container"
-		echo "	-q 	--query		show images and containers"
-		echo "	-r 	--reset		replace a named container"
-		echo
-		echo "Options:"
-		echo "	-c	--container	$CONTAINER"
-		echo "	-i	--image		$IMAGE"
-		echo "	-t	--tag		$TAG"
-		echo "	-v	--volume	$VOLUME"
+		if [ -n "$VERBOSE" ]; then
+			echo "Commands:"
+			echo "	-a  --start   activate a named container"
+			echo "	-b  --build   create a tagged image"
+			echo "	-d  --drop    delete a named container"
+			echo "	-f  --follow  tail logs from a named container"
+			echo "	-h  --help    show this usage information"
+			echo "	-q  --query   show images, containers, stats, volumes"
+			echo "	-r  --reset   replace a named container"
+			echo "	-s  --shell   command line interface on a named container"
+			echo "	-x  --purge   destroy named images, containers, volumes"
+			echo
+			echo "Options:"
+			echo "	-c <string> | --container=<string>  docker container name"
+			echo "	-i <string> | --image=<string>      docker image name"
+			echo "	-p <number> | --port=<number>       host port for binding"
+			echo "	-t <string> | --tag=<string>        docker image tag"
+			echo "	-v <string> | --volume=<string>     docker volume name"
+			echo
+		fi
+		echo "Extra:"
+		echo "	--verbose     include this argument for detailed output"
 		echo
 	;;
 esac

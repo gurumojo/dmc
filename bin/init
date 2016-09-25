@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# DMC Batch Process
+########################################################################
+
+# initialize base environments
+bin/dmc -b -i gurumojo -t development
+bin/dmc -b -i gurumojo -t integration
+bin/dmc -b -i gurumojo -t production
+
+# purge containers from previous run
+bin/dmc -x -c c00
+bin/dmc -x -c c01
+bin/dmc -x -c c02
+
+# build images by environment
+bin/dmc -b -i dev -t development
+bin/dmc -b -i int -t integration
+bin/dmc -b -i pro -t production
+
+# activate containers
+bin/dmc -a -c c00 -p 8000 -i pro -t production
+bin/dmc -a -c c01 -p 8001 -i int -t integration
+bin/dmc -a -c c02 -p 8002 -i dev -t development
+
+# query docker environment
+bin/dmc -q

@@ -116,10 +116,11 @@ shell() {
 }
 
 start() {
-	if [ -n "$CONTAINER" ] && [ -n "$IMAGE" ] && [ -n "$PORT" ] && [ -n "$TAG" ] && [ -n "$VOLUME" ]; then
+	if [ -n "$CONTAINER" ] && [ -n "$IMAGE" ] && [ -n "$PORT" ] && [ -n "$TAG" ]; then
+		[ -z "$VOLUME" ] && VOLUME="${IMAGE}-${CONTAINER}"
 		docker run --name="$CONTAINER" -d -v "$VOLUME":/opt/gurumojo -p "$PORT:80" "$IMAGE:$TAG"
 	else
-		echo 'Error: $CONTAINER, $IMAGE, $PORT, $TAG, $VOLUME are required'
+		echo 'Error: $CONTAINER, $IMAGE, $PORT, $TAG are required'
 		exit 1
 	fi
 }
@@ -163,14 +164,23 @@ if [ -n "$VERBOSE" ]; then
 fi
 
 case "$COMMAND" in
+
 	build) build ;;
+
 	drop) [ -n "$VERBOSE" ] && drop || drop 2>/dev/null ;;
+
 	follow) follow ;;
+
 	purge) [ -n "$VERBOSE" ] && purge || purge 2>/dev/null ;;
+
 	query) query ;;
+
 	reset) [ -n "$VERBOSE" ] && reset || reset 2>/dev/null ;;
+
 	shell) shell ;;
+
 	start) start ;;
+
 	help) ;&
 	*)
 		echo

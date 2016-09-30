@@ -8,5 +8,5 @@ Getting Started
 ---------------
 
 * install dependencies: `npm install`
-* display help text: `./bin/dmc --help`
+* display help text: `./bin/dmc --help --verbose`
 

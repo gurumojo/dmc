@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# DMC Start Script
+########################################################################
+
+inspect() {
+	for x in ${ENVIRONMENTS[@]}; do
+		[ -n "$VERBOSE" ] && echo "ENVIRONMENT=$x"
+		(( $(bin/dmc -q | grep ^gurumojo | grep -c "$x") )) || return 1
+	done
+}
+
+# source configuration
+. bin/env
+
+# fire up our batch process
+inspect && bin/wake || bin/init
+
+# query docker environment
+bin/dmc -q
+

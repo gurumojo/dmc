@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# DMC Environment Variables
+########################################################################
+
+ENVIRONMENTS=$(jq -r '(.environments[] | select(.active).environment) | join(" ")' etc/config.json)
+
+CONTAINERS=$(jq -r '(.environments[] | select(.active).environment) as $e | .containers[] | select(.tag == $e) | @json' etc/config.json) 
+
+#echo "ENVIRONMENTS=(${ENVIRONMENTS[@]})"
+#echo "CONTAINERS=(${CONTAINERS[@]})"
+

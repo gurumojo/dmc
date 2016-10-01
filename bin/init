@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# DMC Batch Process
+# DMC Bootstrap Script
 ########################################################################
 
 # initialize base environments

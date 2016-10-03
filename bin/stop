@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# DMC Stop Script
+########################################################################
+
+drop() {
+	echo "DROPPING CONTAINERS"
+	for x in ${CONTAINERS[@]}; do
+		docker kill "$x"
+		docker rm -f "$x"
+	done
+}
+
+search() {
+	CONTAINERS=$(docker ps | grep -v ^CONTAINER | awk '{print $1}')
+}
+
+
+# source configuration
+. bin/env
+
+# fire up our batch process
+search && drop
+

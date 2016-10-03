@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# DMC Build Script
+########################################################################
+
+import() {
+	echo '#!/bin/bash' > "$FILE"
+	echo "$1" >> "$FILE"
+	. "$FILE"
+}
+
+parse() {
+	echo "$CONTAINER" > "$FILE"
+	JSON=$(jq -r 'keys[] as $k | . as $v | [($k | ascii_upcase), (.[$k] | tostring)] | join("=")' "$FILE")
+	import "$JSON"
+	rm "$FILE"
+}
+
+build() {
+	echo "BUILD $IMAGE:$TAG"
+	bin/dmc -b -i "$IMAGE" -t "$TAG"
+}
+
+validate() {
+	[ -n "$IMAGE" ] && [ -n "$TAG" ] || return 1
+}
+
+
+FILE=$(tempfile)
+
+# source configuration
+. bin/env
+
+# activate containers
+for CONTAINER in ${CONTAINERS[@]}; do
+	parse && validate && build 2>/dev/null || echo "FAIL: $CONTAINER"
+done
+

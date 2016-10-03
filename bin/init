@@ -3,25 +3,32 @@
 # DMC Bootstrap Script
 ########################################################################
 
-# initialize base environments
-bin/dmc -b -i gurumojo -t development
-bin/dmc -b -i gurumojo -t integration
-bin/dmc -b -i gurumojo -t production
+check() {
+	for x in ${ENVIRONMENTS[@]}; do
+		(( $(docker images | grep ^gurumojo | grep -c "$x") )) || return 1
+	done
+}
 
-# purge containers from previous run
-bin/dmc -x -c c00
-bin/dmc -x -c c01
-bin/dmc -x -c c02
+initialize() {
+	for x in ${ENVIRONMENTS[@]}; do
+		echo "INIT ENVIRONMENT $x"
+		$(bin/dmc -b -i gurumojo -t "$x") || echo "INIT $x FAIL!" && return 1
+	done
+}
 
-# build images by environment
-bin/dmc -b -i dev -t development
-bin/dmc -b -i int -t integration
-bin/dmc -b -i pro -t production
+
+# source configuration
+. bin/env
+
+# bootstrap docker environments
+check || initialize
+
+# empty storage from previous runs
+bin/purge
+
+# build configured images
+bin/build
 
 # activate containers
-bin/dmc -a -c c00 -p 8000 -i pro -t production
-bin/dmc -a -c c01 -p 8001 -i int -t integration
-bin/dmc -a -c c02 -p 8002 -i dev -t development
+bin/wake
 
-# query docker environment
-bin/dmc -q

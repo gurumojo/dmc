@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# DMC Purge Script
+########################################################################
+
+destroy() {
+	echo "CONTAINERS"
+	for x in ${CONTAINERS[@]}; do
+		docker kill "$x"
+		docker rm -f "$x"
+	done
+	echo "IMAGES"
+	for x in ${IMAGES[@]}; do
+		docker rmi -f "$x"
+	done
+	echo "VOLUMES"
+	for x in ${VOLUMES[@]}; do
+		docker volume rm "$x"
+	done
+}
+
+search() {
+	CONTAINERS=$(docker ps | grep -v ^CONTAINER | awk '{print $1}')
+	IMAGES=$(docker images | grep -v -e ^REPOSITORY -e ^node -e ^gurumojo | awk '{print $3}')
+	VOLUMES=$(docker volume ls | grep -v ^DRIVER | awk '{print $2}')
+}
+
+
+# source configuration
+. bin/env
+
+# fire up our batch process
+search && destroy
+

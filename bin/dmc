@@ -8,7 +8,7 @@ build() {
 		if [ "$IMAGE" == gurumojo ]; then
 			initialize
 		elif [ "$IMAGE" != base ] && [ "$IMAGE" != template ]; then
-			register
+			known || register && container
 		else
 			echo "WTF?!?"
 		fi
@@ -16,6 +16,10 @@ build() {
 		echo 'Error: $IMAGE is required'
 		exit 1
 	fi
+}
+
+container() {
+	cd "service/$IMAGE" && docker build --rm -t "$IMAGE:$TAG" .
 }
 
 drop() {
@@ -48,6 +52,10 @@ initialize() {
 		echo 'Error: $IMAGE and $TAG are required'
 		exit 1
 	fi
+}
+
+known() {
+	return ls -1 service 2>/dev/null | grep -c "^$IMAGE\$"
 }
 
 purge() {
@@ -94,7 +102,6 @@ register() {
 		mkdir -p "service/$IMAGE"
 		cp service/template/* "service/$IMAGE/"
 		sed -e "s;\(gurumojo:\)[a-z]*;\1$TAG;" < service/template/Dockerfile > "service/$IMAGE/Dockerfile"
-		cd "service/$IMAGE" && docker build --rm -t "$IMAGE:$TAG" .
 	else
 		echo 'Error: $IMAGE and $TAG are required'
 		exit 1
@@ -135,7 +142,7 @@ while [ "$#" -gt 0 ]; do
 		purge|-x|--purge) COMMAND=purge; shift 1;;
 		query|-q|--query) COMMAND=query; shift 1;;
 		reset|-r|--reset) COMMAND=reset; shift 1;;
-		shell|-e|--shell) COMMAND=shell; shift 1;;
+		shell|-s|--shell) COMMAND=shell; shift 1;;
 		start|-a|--start) COMMAND=start; shift 1;;
 
 		-c) CONTAINER="$2"; [ "$#" -gt 1 ] && shift 2 || shift 1;;
@@ -161,6 +168,7 @@ done
 if [ -n "$VERBOSE" ]; then
 	echo
 	echo "Docker Management Console"
+	echo
 fi
 
 case "$COMMAND" in
@@ -183,7 +191,6 @@ case "$COMMAND" in
 
 	help) ;&
 	*)
-		echo
 		echo "Usage:"
 		echo "	# $0 <command> [ <option> [ <option> [...] ] ]"
 		echo

@@ -2,10 +2,10 @@
 	"containers": [
 		{
 			"container": "c00",
-			"image": "pro",
+			"image": "dev",
 			"port": 8000,
-			"tag": "production",
-			"volume": "pro-c00"
+			"tag": "development",
+			"volume": "dev-c00"
 		},{
 			"container": "c01",
 			"image": "int",
@@ -14,16 +14,16 @@
 			"volume": "int-c01"
 		},{
 			"container": "c02",
-			"image": "dev",
+			"image": "pro",
 			"port": 8002,
-			"tag": "development",
-			"volume": "dev-c02"
+			"tag": "production",
+			"volume": "pro-c02"
 		},{
 			"container": "c03",
-			"image": "dev",
+			"image": "pro",
 			"port": 8003,
-			"tag": "development",
-			"volume": "dev-c03"
+			"tag": "production",
+			"volume": "pro-c03"
 		}
 	],
 	"environments": [

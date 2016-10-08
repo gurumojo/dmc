@@ -1,4 +1,5 @@
 {
+	"baseImage": "gurumojo",
 	"containers": [
 		{
 			"container": "c00",

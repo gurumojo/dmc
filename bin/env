@@ -3,10 +3,15 @@
 # DMC Environment Variables
 ########################################################################
 
+BASE_IMAGE=$(jq -r '.baseImage' etc/config.json)
+
 ENVIRONMENTS=$(jq -r '.environments[] | select(.active).environment' etc/config.json)
 
 CONTAINERS=$(jq -r '(.environments[] | select(.active).environment) as $e | .containers[] | select(.tag == $e) | @json' etc/config.json) 
 
-#echo "ENVIRONMENTS=(${ENVIRONMENTS[@]})"
-#echo "CONTAINERS=(${CONTAINERS[@]})"
+if [ -n "$VERBOSE" ]; then
+	echo "BASE_IMAGE=$BASE_IMAGE"
+	echo "ENVIRONMENTS=(${ENVIRONMENTS[@]})"
+	echo "CONTAINERS=(${CONTAINERS[@]})"
+fi
 

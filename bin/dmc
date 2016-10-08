@@ -47,6 +47,7 @@ initialize() {
 		mv Dockerfile tmp
 		sed -e "s;\(GURUMOJO=\)[a-z]*;\1$TAG;" < tmp > Dockerfile
 		docker build --rm -t "$IMAGE:$TAG" .
+		docker create -v /opt/gurumojo --name "$TAG.core" "$IMAGE:$TAG" /bin/true
 		mv tmp Dockerfile
 	else
 		echo 'Error: $IMAGE and $TAG are required'
@@ -89,11 +90,7 @@ query() {
 		docker volume inspect "$VOLUME"
 	fi
 	echo
-	if [ -n "$VERBOSE" ]; then
-		docker ps -a
-	else
-		docker ps
-	fi
+	docker ps -a
 	echo
 }
 
@@ -125,7 +122,7 @@ shell() {
 start() {
 	if [ -n "$CONTAINER" ] && [ -n "$IMAGE" ] && [ -n "$PORT" ] && [ -n "$TAG" ]; then
 		[ -z "$VOLUME" ] && VOLUME="${IMAGE}-${CONTAINER}"
-		docker run --name="$CONTAINER" -d -v "$VOLUME":/opt/gurumojo -p "$PORT:80" "$IMAGE:$TAG"
+		docker run -d --volumes-from=core --name="$CONTAINER" -v "$VOLUME":/opt/gurumojo/service -p "$PORT:80" "$IMAGE:$TAG"
 	else
 		echo 'Error: $CONTAINER, $IMAGE, $PORT, $TAG are required'
 		exit 1

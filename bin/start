@@ -3,34 +3,12 @@
 # DMC Start Script
 ########################################################################
 
-IMAGES=$(docker images)
-
-BASE=$(echo "$IMAGES" | grep "^$BASE_IMAGE")
-
-check_base() {
-	for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
-		(( $(echo "$BASE" | grep -c "$ENVIRONMENT") )) || return 1
-	done
+start() {
+echo "TRYING AGAIN..."
+	bin/build && bin/wake
 }
 
-check_images() {
-	for CONTAINER in ${CONTAINERS[@]}; do
-		IMAGE=$(echo "$CONTAINER" | sed 's;.*"image":"\([^,]*\)".*;\1;')
-		(( $(echo "$IMAGES" | grep -c "^$IMAGE") )) || return 1
-	done
-}
-
-wake() {
-	check_images && bin/wake || bin/build && bin/wake
-}
-
-
-# source configuration
-. bin/env
 
 # fire it up (again)
-check_base && wake || bin/init
-
-# query docker environment
-bin/dmc -q
+bin/wake || start
 

@@ -24,8 +24,8 @@ container() {
 
 drop() {
 	if [ -n "$CONTAINER" ]; then
-		docker kill "$CONTAINER"
-		docker rm -f "$CONTAINER"
+		docker kill "$CONTAINER" &>/dev/null
+		docker rm -f "$CONTAINER" &>/dev/null
 	else
 		echo 'Error: $CONTAINER is required'
 		exit 1
@@ -121,8 +121,12 @@ shell() {
 
 start() {
 	if [ -n "$CONTAINER" ] && [ -n "$IMAGE" ] && [ -n "$PORT" ] && [ -n "$TAG" ]; then
-		[ -z "$VOLUME" ] && VOLUME="${IMAGE}-${CONTAINER}"
-		docker run -d --volumes-from=core --name="$CONTAINER" -v "$VOLUME":/opt/gurumojo/service -p "$PORT:80" "$IMAGE:$TAG"
+		if [ -n "$VOLUME" ]; then
+			docker run -d -p "$PORT:80" --name="$CONTAINER" -v "$VOLUME:/opt/gurumojo" --volumes-from="$TAG.core" "$IMAGE:$TAG"
+		else
+			docker run -d -p "$PORT:80" --name="$CONTAINER" --volumes-from="$TAG.core" "$IMAGE:$TAG"
+		fi
+		sleep 1 && curl "http://0.0.0.0:$PORT/"; echo; echo
 	else
 		echo 'Error: $CONTAINER, $IMAGE, $PORT, $TAG are required'
 		exit 1
@@ -164,7 +168,7 @@ done
 
 if [ -n "$VERBOSE" ]; then
 	echo
-	echo "Docker Management Console"
+	echo "Docker Management Console: $COMMAND"
 	echo
 fi
 

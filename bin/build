@@ -3,17 +3,8 @@
 # DMC Build Script
 ########################################################################
 
-import() {
-	echo '#!/bin/bash' > "$FILE"
-	echo "$1" >> "$FILE"
-	. "$FILE"
-}
-
-parse() {
-	echo "$CONTAINER" > "$FILE"
-	JSON=$(jq -r 'keys[] as $k | . as $v | [($k | ascii_upcase), (.[$k] | tostring)] | join("=")' "$FILE")
-	import "$JSON"
-	rm "$FILE"
+base_exists() {
+	(( $(echo "$DOCKER_IMAGES" | grep "^$APPLICATION" | grep -c "$ENVIRONMENT") )) || return 1
 }
 
 build() {
@@ -21,18 +12,69 @@ build() {
 	bin/dmc -b -i "$IMAGE" -t "$TAG"
 }
 
+check_base() {
+	COUNT=0
+	for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
+		[ -n "$VERBOSE" ] && echo "CHECK ENVIRONMENT: $ENVIRONMENT"
+		base_exists || (( COUNT++ ))
+	done
+	(( "$COUNT" )) && echo "FAIL: $COUNT base images missing"
+	return "$COUNT"
+}
+
+check_images() {
+	COUNT=0
+	for CONTAINER in ${CONTAINERS[@]}; do
+		IMAGE=$(echo "$CONTAINER" | sed 's;.*"image":"\([^,]*\)".*;\1;')
+		TAG=$(echo "$CONTAINER" | sed 's;.*"tag":"\([^,]*\)".*;\1;')
+		[ -n "$VERBOSE" ] && echo "CHECK IMAGE: $IMAGE:$TAG"
+		image_exists || (( COUNT++ ))
+	done
+	(( "$COUNT" )) && echo "FAIL: $COUNT dependencies missing"
+	return "$COUNT"
+}
+
+create() {
+	CONFIG=$(CONTAINER="$1" bin/import)
+	. "$CONFIG" && rm "$CONFIG"
+	validate && build
+}
+
+fail() {
+	echo "FAIL: $IMAGE:$TAG $1"
+}
+
+image_exists() {
+	(( $(echo "$DOCKER_IMAGES" | grep -c "^$IMAGE:$TAG\$") )) || return 1
+}
+
+initialize() {
+	for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
+		echo
+		echo "INIT ENVIRONMENT: $ENVIRONMENT"
+		bin/dmc -b -i gurumojo -t "$ENVIRONMENT" 2>/dev/null
+	done
+}
+
 validate() {
+	[ -z "$IMAGE" ] && echo 'Error: $IMAGE is required'
+	[ -z "$TAG" ] && echo 'Error: $TAG is required'
 	[ -n "$IMAGE" ] && [ -n "$TAG" ] || return 1
+	(( $(echo "$DOCKER_IMAGES" | grep -c "^$IMAGE:$TAG\$") )) && fail "exists" && return 1
+	return 0
 }
 
 
-FILE=$(tempfile)
+[ -n "$VERBOSE" ] && echo "BUILDING..."
 
 # source configuration
 . bin/env
 
-# activate containers
+# verify dependencies
+check_base || initialize
+
+# build containers
 for CONTAINER in ${CONTAINERS[@]}; do
-	parse && validate && build 2>/dev/null || echo "FAIL: $CONTAINER"
+	create "$CONTAINER"
 done
 

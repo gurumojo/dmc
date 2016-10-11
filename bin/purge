@@ -4,31 +4,38 @@
 ########################################################################
 
 destroy() {
-	echo "CONTAINERS"
-	for CONTAINER in ${CONTAINERS[@]}; do
-		docker kill "$CONTAINER"
-		docker rm -f "$CONTAINER"
-	done
-	echo "IMAGES"
-	for IMAGE in ${IMAGES[@]}; do
-		docker rmi -f "$IMAGE"
-	done
-	echo "VOLUMES"
-	for VOLUME in ${VOLUMES[@]}; do
-		docker volume rm "$VOLUME"
-	done
+	if [ -n "$CONTAINERS" ]; then
+		echo "PURGING CONTAINERS"
+		for CONTAINER in ${CONTAINERS[@]}; do
+			drop | sort -u
+		done
+	fi
+	if [ -n "$IMAGES" ]; then
+		echo "PURGING IMAGES"
+		for IMAGE in ${IMAGES[@]}; do
+			docker rmi -f "$IMAGE"
+		done
+	fi
+	if [ -n "$VOLUMES" ]; then
+		echo "PURGING VOLUMES"
+		for VOLUME in ${VOLUMES[@]}; do
+			docker volume rm "$VOLUME"
+		done
+	fi
+}
+
+drop() {
+	docker kill "$CONTAINER" 2>/dev/null
+	docker rm -f "$CONTAINER"
 }
 
 search() {
-	CONTAINERS=$(docker ps -a | grep -v ^CONTAINER | awk '{print $1}')
+	CONTAINERS=$(docker ps -a | grep -v ^CONTAINER | awk '{print $NF}')
 	IMAGES=$(docker images | grep -v -e ^REPOSITORY -e ^node | awk '{print $3}')
 	VOLUMES=$(docker volume ls | grep -v ^DRIVER | awk '{print $2}')
 }
 
 
-# source configuration
-. bin/env
-
-# fire up our batch process
+# shut it down
 search && destroy
 

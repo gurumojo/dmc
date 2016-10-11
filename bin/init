@@ -3,28 +3,8 @@
 # DMC Bootstrap Script
 ########################################################################
 
-check() {
-	for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
-		(( $(docker images | grep ^gurumojo | grep -c "$ENVIRONMENT") )) || return 1
-	done
-}
-
-initialize() {
-	for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
-		echo "INIT ENVIRONMENT $ENVIRONMENT"
-		$(bin/dmc -b -i gurumojo -t "$ENVIRONMENT") 2>/dev/null
-	done
-}
-
-
-# source configuration
-. bin/env
-
 # empty storage from previous runs
 bin/purge
-
-# bootstrap docker environments
-check || initialize
 
 # build configured images
 bin/build

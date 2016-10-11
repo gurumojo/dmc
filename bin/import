@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# DMC Import Script
+########################################################################
+
+import() {
+	echo '#!/bin/bash' > "$FILE"
+	echo "$VARS" >> "$FILE"
+	echo "$FILE"
+}
+
+parse() {
+	echo "$CONTAINER" > "$FILE"
+	VARS=$(jq -r 'keys[] as $k | . as $v | [($k | ascii_upcase), (.[$k] | tostring)] | @text "export \(join("="))"' "$FILE")
+}
+
+
+# verify configuration
+[ -z "$CONTAINER" ] && echo 'Error: $CONTAINER is required' && exit 1
+
+FILE=$(tempfile)
+parse && import
+

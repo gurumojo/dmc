@@ -3,15 +3,43 @@
 # DMC Environment Variables
 ########################################################################
 
-BASE_IMAGE=$(jq -r '.baseImage' etc/config.json)
+[ -z "$APPLICATION" ] && export APPLICATION=$(jq -r '.application' etc/config.json)
 
-ENVIRONMENTS=$(jq -r '.environments[] | select(.active).environment' etc/config.json)
+[ -z "$ENVIRONMENTS" ] && export ENVIRONMENTS=$(jq -r '.environments[] | select(.active).environment' etc/config.json)
 
-CONTAINERS=$(jq -r '(.environments[] | select(.active).environment) as $e | .containers[] | select(.tag == $e) | @json' etc/config.json) 
+[ -z "$CONTAINERS" ] && export CONTAINERS=$(jq -r '(.environments[] | select(.active).environment) as $e | .containers[] | select(.tag == $e) | @json' etc/config.json) 
+
+
+[ -z "$DOCKER_ACTIVE" ] && export DOCKER_ACTIVE=$(docker ps | grep -v COMMAND | awk '{print $NF}')
+
+[ -z "$DOCKER_CONTAINERS" ] && export DOCKER_CONTAINERS=$(docker ps -a | grep -v COMMAND | awk '{print $NF}')
+
+[ -z "$DOCKER_IMAGES" ] && export DOCKER_IMAGES=$(docker images | grep -v TAG | awk '{print $1":"$2}')
+
 
 if [ -n "$VERBOSE" ]; then
-	echo "BASE_IMAGE=$BASE_IMAGE"
-	echo "ENVIRONMENTS=(${ENVIRONMENTS[@]})"
-	echo "CONTAINERS=(${CONTAINERS[@]})"
+	echo
+	echo "APPLICATION=$APPLICATION"
+	echo
+	echo "ENVIRONMENTS=("
+	echo "${ENVIRONMENTS[@]}"
+	echo ")"
+	echo
+	echo "CONTAINERS=("
+	echo "${CONTAINERS[@]}"
+	echo ")"
+	echo
+	echo "DOCKER_IMAGES=("
+	echo "${DOCKER_IMAGES[@]}"
+	echo ")"
+	echo
+	echo "DOCKER_CONTAINERS=("
+	echo "${DOCKER_CONTAINERS[@]}"
+	echo ")"
+	echo
+	echo "DOCKER_ACTIVE=("
+	echo "${DOCKER_ACTIVE[@]}"
+	echo ")"
+	echo
 fi
 

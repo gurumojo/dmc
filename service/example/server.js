@@ -6,7 +6,7 @@ const service = require('express')();
 const port = 80;
 
 function datetime(req, res, next) {
-  req.datetime = new Date().toString();
+  req.datetime = new Date().toISOString();
   next();
 }
 
@@ -24,5 +24,8 @@ service.get('/', (req, res) => {
 });
 
 service.listen(port, () => {
-	console.log(`${new Date().toString()} - Example Service running on ${hostname}:${port}`);
+	console.log({
+		datetime: new Date().toISOString(),
+		init: `Example Service (running on ${hostname}:${port})`
+	});
 });

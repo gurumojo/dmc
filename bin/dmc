@@ -8,7 +8,7 @@ build() {
 		if [ "$IMAGE" == gurumojo ]; then
 			initialize
 		elif [ "$IMAGE" != base ] && [ "$IMAGE" != template ]; then
-			known || register && container
+			register && container
 		else
 			echo "WTF?!?"
 		fi
@@ -20,6 +20,12 @@ build() {
 
 container() {
 	cd "service/$IMAGE" && docker build --rm -t "$IMAGE:$TAG" .
+}
+
+create() {
+	echo "MKDIR: service/$IMAGE"
+	mkdir -p "service/$IMAGE"
+	cp service/template/* "service/$IMAGE/"
 }
 
 drop() {
@@ -53,10 +59,6 @@ initialize() {
 		echo 'Error: $IMAGE and $TAG are required'
 		exit 1
 	fi
-}
-
-known() {
-	return ls -1 service 2>/dev/null | grep -c "^$IMAGE\$"
 }
 
 purge() {
@@ -95,9 +97,9 @@ query() {
 }
 
 register() {
-	if [ -n "$IMAGE" ] && [ "$TAG" ]; then
-		mkdir -p "service/$IMAGE"
-		cp service/template/* "service/$IMAGE/"
+	if [ -n "$IMAGE" ] && [ -n "$TAG" ]; then
+		echo "REGISTER: $IMAGE:$TAG"
+		(( $(ls -1 service | grep -c "^$IMAGE\$") )) || create
 		sed -e "s;\(gurumojo:\)[a-z]*;\1$TAG;" < service/template/Dockerfile > "service/$IMAGE/Dockerfile"
 	else
 		echo 'Error: $IMAGE and $TAG are required'

@@ -10,5 +10,5 @@ bin/purge
 bin/build
 
 # activate containers
-bin/wake
+bin/start
 

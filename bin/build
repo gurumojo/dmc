@@ -8,7 +8,8 @@ base_exists() {
 }
 
 build() {
-	echo "BUILD $IMAGE:$TAG"
+	echo
+	echo "BUILD: $IMAGE:$TAG"
 	bin/dmc -b -i "$IMAGE" -t "$TAG"
 }
 

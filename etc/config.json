@@ -3,10 +3,10 @@
 	"containers": [
 		{
 			"container": "c00",
-			"image": "dev",
+			"image": "example",
 			"port": 8000,
 			"tag": "development",
-			"volume": "dev-c00"
+			"volume": "example-c00"
 		},{
 			"container": "c01",
 			"image": "int",

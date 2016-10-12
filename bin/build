@@ -53,7 +53,7 @@ initialize() {
 	for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
 		echo
 		echo "INIT ENVIRONMENT: $ENVIRONMENT"
-		bin/dmc -b -i gurumojo -t "$ENVIRONMENT" 2>/dev/null
+		bin/dmc -b -i "$APPLICATION" -t "$ENVIRONMENT" 2>/dev/null
 	done
 }
 

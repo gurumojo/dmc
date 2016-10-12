@@ -3,9 +3,11 @@
 # Docker Management Console
 ########################################################################
 
+[ -z "$APPLICATION" ] && APPLICATION=gurumojo
+
 build() {
 	if [ -n "$IMAGE" ]; then
-		if [ "$IMAGE" == gurumojo ]; then
+		if [ "$IMAGE" == "$APPLICATION" ]; then
 			initialize
 		elif [ "$IMAGE" != base ] && [ "$IMAGE" != template ]; then
 			register && container
@@ -51,9 +53,9 @@ initialize() {
 	if [ -n "$IMAGE" ] && [ -n "$TAG" ]; then
 		cd service/base
 		mv Dockerfile tmp
-		sed -e "s;\(GURUMOJO=\)[a-z]*;\1$TAG;" < tmp > Dockerfile
+		sed -e "s;\(${APPLICATION^^}=\)[a-z]*;\1$TAG;" < tmp > Dockerfile
 		docker build --rm -t "$IMAGE:$TAG" .
-		docker create -v /opt/gurumojo --name "$TAG.core" "$IMAGE:$TAG" /bin/true
+		docker create -v "/opt/$APPLICATION" --name "$TAG.core" "$IMAGE:$TAG" /bin/true
 		mv tmp Dockerfile
 	else
 		echo 'Error: $IMAGE and $TAG are required'
@@ -66,7 +68,7 @@ purge() {
 		drop "$CONTAINER"
 	fi
 	if [ -n "$IMAGE" ]; then
-		if [ "$IMAGE" != gurumojo ]; then
+		if [ "$IMAGE" != "$APPLICATION" ]; then
 			docker rmi -f $(docker images -a | grep "$IMAGE" | awk '{print $3}')
 		fi
 	fi
@@ -100,7 +102,7 @@ register() {
 	if [ -n "$IMAGE" ] && [ -n "$TAG" ]; then
 		echo "REGISTER: $IMAGE:$TAG"
 		(( $(ls -1 service | grep -c "^$IMAGE\$") )) || create
-		sed -e "s;\(gurumojo:\)[a-z]*;\1$TAG;" < service/template/Dockerfile > "service/$IMAGE/Dockerfile"
+		sed -e "s;\($APPLICATION:\)[a-z]*;\1$TAG;" < service/template/Dockerfile > "service/$IMAGE/Dockerfile"
 	else
 		echo 'Error: $IMAGE and $TAG are required'
 		exit 1
@@ -124,7 +126,7 @@ shell() {
 start() {
 	if [ -n "$CONTAINER" ] && [ -n "$IMAGE" ] && [ -n "$PORT" ] && [ -n "$TAG" ]; then
 		if [ -n "$VOLUME" ]; then
-			docker run -d -p "$PORT:80" --name="$CONTAINER" -v "$VOLUME:/opt/gurumojo" --volumes-from="$TAG.core" "$IMAGE:$TAG"
+			docker run -d -p "$PORT:80" --name="$CONTAINER" -v "$VOLUME:/opt/$APPLICATION" --volumes-from="$TAG.core" "$IMAGE:$TAG"
 		else
 			docker run -d -p "$PORT:80" --name="$CONTAINER" --volumes-from="$TAG.core" "$IMAGE:$TAG"
 		fi

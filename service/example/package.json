@@ -7,7 +7,7 @@
     "url": "https://github.com/gurumojo/dmc-example-service"
   },
   "scripts": {
-    "start": "node server",
+    "start": "node_modules/nodemon/bin/nodemon.js server.js",
     "test": "node test"
   },
   "author": "theguy@gurumojo.net",
@@ -15,5 +15,8 @@
   "dependencies": {
     "express": "4.14.x",
     "lodash": "4.16.x"
+  },
+  "devDependencies": {
+    "nodemon": "1.11.x"
   }
 }

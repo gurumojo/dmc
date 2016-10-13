@@ -32,7 +32,7 @@
 			"active": true,
 			"environment": "development"
 		},{
-			"active": true,
+			"active": false,
 			"environment": "integration"
 		},{
 			"active": false,
@@ -43,5 +43,9 @@
 		{
 			"description": "Docker Management Console"
 		}
+	],
+	"shares": [
+		"etc",
+		"lib"
 	]
 }

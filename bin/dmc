@@ -55,11 +55,9 @@ initialize() {
 		mv Dockerfile tmp
 		sed -e "s;\(${APPLICATION^^}=\)[a-z]*;\1$TAG;" < tmp > Dockerfile
 		docker build --rm -t "$IMAGE:$TAG" .
-		docker create -v "/opt/$APPLICATION/etc" --name "$TAG.etc" "$IMAGE:$TAG" /bin/true
 		mv tmp Dockerfile
 		cd - &>/dev/null
-		tar cf var/etc.tar etc/
-		docker cp - "$TAG.etc:/opt/$APPLICATION/" < var/etc.tar
+		storage
 	else
 		echo 'Error: $IMAGE and $TAG are required'
 		exit 1
@@ -138,6 +136,14 @@ start() {
 		echo 'Error: $CONTAINER, $IMAGE, $PORT, $TAG are required'
 		exit 1
 	fi
+}
+
+storage() {
+	for DIR in ${SHARES[@]}; do
+		docker create -v "/opt/$APPLICATION/$DIR" --name "$TAG.$DIR" "$IMAGE:$TAG" /bin/true
+		tar cf "var/$DIR.tar" "$DIR/"
+		docker cp - "$TAG.$DIR:/opt/$APPLICATION/" < "var/$DIR.tar"
+	done
 }
 
 

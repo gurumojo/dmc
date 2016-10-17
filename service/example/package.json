@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Docker Management Console: Example Service",
   "repository": {
     "type": "git",
@@ -13,8 +13,18 @@
   "author": "theguy@gurumojo.net",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "1.15.x",
+    "connect-flash": "0.1.x",
+    "cookie-parser": "1.4.x",
     "express": "4.14.x",
-    "lodash": "4.16.x"
+    "express-session": "1.14.x",
+    "lodash": "4.16.x",
+    "passport": "0.3.x",
+    "passport-http-bearer": "1.0.x",
+    "passport-local": "1.0.x",
+    "passport-oauth": "1.0.x",
+    "serve-favicon": "2.3.x",
+    "winston": "2.2.x"
   },
   "devDependencies": {
     "nodemon": "1.11.x"

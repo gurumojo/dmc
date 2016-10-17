@@ -1,6 +1,6 @@
 {
   "name": "app",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Hello World",
   "scripts": {
     "start": "node server",
@@ -9,7 +9,7 @@
   "author": "theguy@gurumojo.net",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.14.0",
-    "lodash": "^4.16.1"
+    "express": "4.14.x",
+    "lodash": "4.16.x"
   }
 }

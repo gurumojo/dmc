@@ -10,7 +10,7 @@ const hostname = require('os').hostname();
 const includes = require('lodash/includes');
 const logger = require('./lib/logger');
 const partial = require('lodash/partial');
-const passport = require('./middleware/session/config');
+const passport = require('./lib/session');
 const pick = require('lodash/pick');
 const readdir = require('fs').readdirSync;
 
@@ -98,9 +98,9 @@ service.use(passport.session());
 service.use(message);
 service.use(log);
 
-//readdir('middleware')
-//.reduce(partial(discover, 'middleware'),  [])
-//.forEach(middleware => service.use(middleware));
+readdir('middleware')
+.reduce(partial(discover, 'middleware'),  [])
+.forEach(middleware => service.use(middleware));
 
 readdir('route')
 .reduce(partial(discover, 'route'), [])

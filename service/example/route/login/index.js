@@ -1,6 +1,6 @@
 'use strict';
-const passport = require('../../middleware/session/config');
 const router = require('express').Router();
+const session = require('../../lib/session');
 
 const form = `<form method="post">
 	<input name="username" value="theguy">
@@ -12,7 +12,7 @@ const form = `<form method="post">
 router.get('/login', (request, response) => response.send(form));
 
 router.post('/login',
-	passport.authenticate('local', {failureRedirect: '/login'}),
+	session.authenticate('local', {failureRedirect: '/login'}),
 	(request, response) => {
 		request.flash('info', {login: true});
 		request.flash('debug', request.user);

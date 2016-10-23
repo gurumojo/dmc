@@ -1,6 +1,6 @@
 {
   "name": "dmc",
-  "version": "0.0.3",
+  "version": "0.0.4-rc",
   "description": "Docker Management Console",
   "repository": {
     "type": "git",
@@ -14,6 +14,7 @@
   "author": "theguy@gurumojo.net",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "3.4.x",
     "lodash": "4.16.x"
   }
 }

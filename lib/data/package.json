@@ -1,0 +1,19 @@
+{
+  "name": "data",
+  "version": "0.0.0",
+  "description": "Docker Management Console: Data Library",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gurumojo/dmc-data-library"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "author": "theguy@gurumojo.net",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "4.16.x",
+    "redis": "2.6.x"
+  }
+}

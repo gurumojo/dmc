@@ -1,0 +1,11 @@
+[{
+	"id": 0,
+	"name": "user0",
+	"email": "user0@gurumojo.net",
+	"secret": "$3cret"
+},{
+	"id": 1,
+	"name": "user1",
+	"email": "user1@gurumojo.net",
+	"secret": "$3cret"
+}]

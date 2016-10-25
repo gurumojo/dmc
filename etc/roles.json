@@ -1,16 +1,16 @@
 [{
 	"id": 0,
 	"name": "guest",
-	"membership": [],
+	"membership": "",
 	"permission": 0
 },{
 	"id": 1,
 	"name": "user",
-	"membership": [0,1],
+	"membership": "0,1",
 	"permission": 1
 },{
 	"id": 2,
 	"name": "admin",
-	"membership": [0],
+	"membership": "0",
 	"permission": 2
 }]

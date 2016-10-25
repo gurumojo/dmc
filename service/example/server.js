@@ -27,6 +27,13 @@ function datetime(request, response, next) {
 	next();
 }
 
+function discover(type, array, value) {
+	if (!includes(DISCOVERY_BLACKLIST, value) && value.indexOf('.') < 0) {
+		array.push(require(`./${type}/${value}`))
+	}
+	return array;
+}
+
 function log(request, response, next) {
 	if (response.locals.profile.length) {
 		loop('profile', response.locals.profile);
@@ -43,12 +50,12 @@ function log(request, response, next) {
 	if (response.locals.error.length) {
 		loop('error', response.locals.error);
 	}
-	logger.info('request', pick(request, REQUEST_WHITELIST));
+	logger.info('example.request', pick(request, REQUEST_WHITELIST));
 	next();
 }
 
 function loop(level, flash) {
-	flash.forEach(message => logger[level]('message', message));
+	flash.forEach(message => logger[level]('example.message', message));
 }
 
 function message(request, response, next) {
@@ -63,13 +70,6 @@ function message(request, response, next) {
 function timestamp(request, response, next) {
 	request.timestamp = Date.now();
 	next();
-}
-
-function discover(type, array, value) {
-	if (!includes(DISCOVERY_BLACKLIST, value) && value.indexOf('.') < 0) {
-		array.push(require(`./${type}/${value}`))
-	}
-	return array;
 }
 
 
@@ -107,13 +107,16 @@ readdir('route')
 .forEach(route => service.use(route));
 
 service.get('/*', (request, response) => {
-	response.send(`<div>
-		<h1><a href="/login">${hostname}</a></h1>
-		<div>${request.timestamp}</div>
-	</div>`);
+	response.send(`
+		<div>
+			<h1><a href="/login">${hostname}</a></h1>
+			<div>${request.timestamp}</div>
+		</div>
+	`);
 });
 
 service.listen(PORT, () => {
+	logger.level('debug');
 	logger.info('init', {
 		application: config.application,
 		uri: `http://${hostname}:${PORT}/`

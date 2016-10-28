@@ -15,11 +15,11 @@ const pick = require('lodash/pick');
 const readdir = require('fs').readdirSync;
 
 const DISCOVERY_BLACKLIST = ['Dockerfile', 'etc', 'lib', 'node_modules'];
-const FAVICON_PATH = './etc/favicon.png';
+const FAVICON_PATH = `${__dirname}/etc/favicon.png`;
 const PORT = 80;
-const REQUEST_WHITELIST = ['method', 'path', 'query', 'body', 'headers'];
+const REQUEST_WHITELIST = ['method', 'path', 'query', 'body', 'headers', 'sessionID'];
 const SESSION_SECRET = 'y0uRbl00Dt4st3Slik3$yruP';
-const STATIC_PATH = 'public';
+const STATIC_PATH = `${__dirname}/etc/public`;
 
 
 function datetime(request, response, next) {
@@ -34,7 +34,7 @@ function discover(type, array, value) {
 	return array;
 }
 
-function log(request, response, next) {
+function requestLogger(request, response, next) {
 	if (response.locals.profile.length) {
 		loop('profile', response.locals.profile);
 	}
@@ -67,6 +67,11 @@ function message(request, response, next) {
     next();
 }
 
+function sessionLogger(request, response, next) {
+	logger.info('example.session', request.user);
+	next();
+}
+
 function timestamp(request, response, next) {
 	request.timestamp = Date.now();
 	next();
@@ -96,13 +101,14 @@ service.use(passport.initialize());
 service.use(passport.session());
 
 service.use(message);
-service.use(log);
+service.use(requestLogger);
+service.use(sessionLogger);
 
-readdir('middleware')
+readdir(`${__dirname}/middleware`)
 .reduce(partial(discover, 'middleware'),  [])
 .forEach(middleware => service.use(middleware));
 
-readdir('route')
+readdir(`${__dirname}/route`)
 .reduce(partial(discover, 'route'), [])
 .forEach(route => service.use(route));
 

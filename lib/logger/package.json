@@ -9,6 +9,7 @@
   "author": "theguy@gurumojo.net",
   "license": "ISC",
   "dependencies": {
+    "lodash": "4.16.x",
     "winston": "2.2.x"
   }
 }

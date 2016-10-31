@@ -16,7 +16,7 @@ const readdir = require('fs').readdirSync;
 
 const DISCOVERY_BLACKLIST = ['Dockerfile', 'etc', 'lib', 'node_modules'];
 const FAVICON_PATH = `${__dirname}/etc/favicon.png`;
-const PORT = 80;
+const PORT = 8000;
 const REQUEST_WHITELIST = ['method', 'path', 'query', 'body', 'headers', 'sessionID'];
 const SESSION_SECRET = 'y0uRbl00Dt4st3Slik3$yruP';
 const STATIC_PATH = `${__dirname}/etc/public`;
@@ -34,37 +34,25 @@ function discover(type, array, value) {
 	return array;
 }
 
-function requestLogger(request, response, next) {
-	if (response.locals.profile.length) {
-		loop('profile', response.locals.profile);
-	}
-	if (response.locals.debug.length) {
-		loop('debug', response.locals.debug);
-	}
-	if (response.locals.info.length) {
-		loop('info', response.locals.info);
-	}
-	if (response.locals.warn.length) {
-		loop('warn', response.locals.warn);
-	}
-	if (response.locals.error.length) {
-		loop('error', response.locals.error);
-	}
-	logger.info('example.request', pick(request, REQUEST_WHITELIST));
-	next();
-}
-
 function loop(level, flash) {
 	flash.forEach(message => logger[level]('example.message', message));
 }
 
 function message(request, response, next) {
-    response.locals.profile = request.flash('profile');
-    response.locals.debug = request.flash('debug');
-    response.locals.info = request.flash('info');
-    response.locals.warn = request.flash('warn');
-    response.locals.error = request.flash('error');
+	Object.keys(logger).forEach(method => {
+		response.locals[method] = request.flash(method);
+	});
     next();
+}
+
+function requestLogger(request, response, next) {
+	Object.keys(logger).forEach(method => {
+		if (response.locals[method].length) {
+			loop(method, response.locals[method]);
+		}
+	});
+	logger.info('example.request', pick(request, REQUEST_WHITELIST));
+	next();
 }
 
 function sessionLogger(request, response, next) {

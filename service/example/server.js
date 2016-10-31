@@ -16,7 +16,7 @@ const readdir = require('fs').readdirSync;
 
 const DISCOVERY_BLACKLIST = ['Dockerfile', 'etc', 'lib', 'node_modules'];
 const FAVICON_PATH = `${__dirname}/etc/favicon.png`;
-const PORT = 8000;
+const PORT = 80;
 const REQUEST_WHITELIST = ['method', 'path', 'query', 'body', 'headers', 'sessionID'];
 const SESSION_SECRET = 'y0uRbl00Dt4st3Slik3$yruP';
 const STATIC_PATH = `${__dirname}/etc/public`;

@@ -1,11 +1,13 @@
 [{
 	"id": 0,
-	"name": "user0",
-	"email": "user0@gurumojo.net",
-	"secret": "$3cret"
+	"handle": "user0",
+	"given_name": "Zero",
+	"family_name": "User",
+	"email": "user0@gurumojo.net"
 },{
 	"id": 1,
-	"name": "user1",
-	"email": "user1@gurumojo.net",
-	"secret": "$3cret"
+	"handle": "user1",
+	"given_name": "One",
+	"family_name": "User",
+	"email": "user1@gurumojo.net"
 }]

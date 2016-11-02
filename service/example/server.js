@@ -56,7 +56,7 @@ function requestLogger(request, response, next) {
 }
 
 function sessionLogger(request, response, next) {
-	logger.info('example.session', request.user);
+	logger.debug('example.session', request.user);
 	next();
 }
 

@@ -1,12 +1,11 @@
 'use strict';
 const router = require('express').Router();
-const session = require('../../lib/session');
 
 
 router.get('/logout', (request, response) => {
 	const form = `
 		<form method="post">
-			<input name="session" value="${request.sessionID}">
+			<input name="session-id" value="${request.sessionID}">
 			<button>post</button>
 		</form>
 	`;

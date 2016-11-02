@@ -4,8 +4,8 @@ const session = require('../../lib/session');
 
 const form = `
 	<form method="post">
-		<input name="username" value="theguy">
-		<input name="password" value="$3cr3t">
+		<input name="username" value="user0">
+		<input name="password" value="xyz">
 		<button>post</button>
 	</form>
 `;

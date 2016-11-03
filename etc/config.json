@@ -3,6 +3,7 @@
 	"containers": [
 		{
 			"container": "c00",
+			"dependencies": "etc,lib",
 			"image": "example",
 			"port": 8000,
 			"tag": "development",

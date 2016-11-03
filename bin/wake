@@ -42,8 +42,15 @@ running() {
 start() {
 	echo
 	echo "START: $CONTAINER from $IMAGE:$TAG"
-	echo "bin/dmc -a -c $CONTAINER -i $IMAGE -p $PORT -t $TAG -v $VOLUME"
-	bin/dmc -a -c "$CONTAINER" -i "$IMAGE" -p "$PORT" -t "$TAG" -v "$VOLUME"
+	CMD="docker run -d -p $PORT:80 --name $CONTAINER --network $APPLICATION"
+	[ -n "$VOLUME" ] && CMD="$CMD -v $VOLUME:/opt/$APPLICATION"
+	IFS=',' read -ra IMPORTS <<< "$DEPENDENCIES"
+	for IMPORT in $"${IMPORTS[@]}"; do
+		CMD="$CMD --volumes-from=$TAG.$IMPORT:ro"
+	done
+	CMD="$CMD $IMAGE:$TAG"
+	echo "EXEC: $CMD"
+	$CMD
 }
 
 stopped() {
@@ -55,9 +62,8 @@ validate() {
 	[ -z "$IMAGE" ] && echo 'Error: $IMAGE is required'
 	[ -z "$PORT" ] && echo 'Error: $PORT is required'
 	[ -z "$TAG" ] && echo 'Error: $TAG is required'
-	[ -z "$VOLUME" ] && echo 'Error: $VOLUME is required'
-	[ -n "$CONTAINER" ] && [ -n "$IMAGE" ] && [ -n "$PORT" ] && [ -n "$TAG" ] && [ -n "$VOLUME" ] || return 1
-	inspect || return 1
+	[ -n "$CONTAINER" ] && [ -n "$IMAGE" ] && [ -n "$PORT" ] && [ -n "$TAG" ] || return 1
+	#inspect || return 1
 	return 0
 }
 

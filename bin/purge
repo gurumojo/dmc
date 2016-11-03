@@ -31,7 +31,7 @@ drop() {
 
 search() {
 	CONTAINERS=$(docker ps -a | grep -v ^CONTAINER | awk '{print $NF}')
-	IMAGES=$(docker images | grep -v -e ^REPOSITORY -e ^node | awk '{print $3}')
+	IMAGES=$(docker images | grep -v -e ^REPOSITORY -e ^node -e ^redis | awk '{print $3}')
 	VOLUMES=$(docker volume ls | grep -v ^DRIVER | awk '{print $2}')
 }
 

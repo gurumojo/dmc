@@ -13,6 +13,7 @@
   "author": "theguy@gurumojo.net",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "3.4.x",
     "lodash": "4.16.x",
     "redis": "2.6.x"
   }

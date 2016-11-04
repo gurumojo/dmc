@@ -82,6 +82,12 @@ query() {
 	fi
 	echo
 	if [ -n "$VERBOSE" ]; then
+		docker network ls
+	else
+		docker network ls | grep -v -e host -e none #| awk '{}'
+	fi
+	echo
+	if [ -n "$VERBOSE" ]; then
 		docker images -a
 	else
 		docker images
@@ -93,12 +99,10 @@ query() {
 	fi
 	echo
 	if [ -n "$VERBOSE" ]; then
-		docker network ls
+		docker ps -a
 	else
-		docker network ls | grep -e NETWORK -e "$APPLICATION"
+		docker ps
 	fi
-	echo
-	docker ps -a
 	echo
 }
 

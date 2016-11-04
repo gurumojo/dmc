@@ -3,6 +3,17 @@
 # DMC Restart Script
 ########################################################################
 
+drop() {
+	echo
+	echo "DROP: $CONTAINER $IMAGE:$TAG"
+	if [ -n "$CONTAINER" ]; then
+		docker kill "$CONTAINER" &>/dev/null
+		docker rm -f "$CONTAINER" &>/dev/null
+	else
+		return 1
+	fi
+}
+
 exists() {
 	(( $(echo "$DOCKER_ACTIVE" | grep -c "$CONTAINER\$") )) || return 1
 }
@@ -24,9 +35,8 @@ inspect() {
 
 restart() {
 	echo
-	echo "RESTART: $CONTAINER from $IMAGE:$TAG"
-	echo "bin/dmc -r -c $CONTAINER -i $IMAGE -p $PORT -t $TAG -v $VOLUME"
-	bin/dmc -r -c "$CONTAINER" -i "$IMAGE" -p "$PORT" -t "$TAG" -v "$VOLUME"
+	echo "RESTART: $CONTAINER"
+	drop && start
 }
 
 route() {
@@ -41,7 +51,7 @@ running() {
 
 start() {
 	echo
-	echo "START: $CONTAINER from $IMAGE:$TAG"
+	echo "START: $CONTAINER $IMAGE:$TAG"
 	CMD="docker run -d -p $PORT:80 --name $CONTAINER --network $APPLICATION"
 	[ -n "$VOLUME" ] && CMD="$CMD -v $VOLUME:/opt/$APPLICATION"
 	IFS=',' read -ra IMPORTS <<< "$DEPENDENCIES"
@@ -55,6 +65,14 @@ start() {
 
 stopped() {
 	running && return 1 || exists || return 1
+}
+
+storage() {
+	if [ "$ENVIRONMENT" == "development" ]; then
+		docker run -d -p 6379:6379 --name "$ENVIRONMENT.db" --network "$APPLICATION" -v "$ENVIRONMENT-db:/data" redis:alpine
+	else
+		docker run -d --name "$ENVIRONMENT.db" --network "$APPLICATION" -v "$ENVIRONMENT-db:/data" redis:alpine
+	fi
 }
 
 validate() {
@@ -72,6 +90,11 @@ validate() {
 
 # source configuration
 . bin/env
+
+# activate databases
+for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
+	storage
+done
 
 # activate containers
 for CONTAINER in ${CONTAINERS[@]}; do

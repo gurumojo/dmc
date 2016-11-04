@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# DMC Update Script
+########################################################################
+
+JSON=$(find . -name package.json | grep -v node_modules)
+
+for PACKAGE in ${JSON[@]}; do
+	DIR=$(dirname $PACKAGE)
+	echo "Working in $DIR ..."
+	cd $DIR
+	[ -f yarn.lock ] || yarn generate-lock-entry > yarn.lock
+	yarn upgrade
+	cd - &>/dev/null
+done

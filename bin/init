@@ -3,20 +3,29 @@
 # DMC Bootstrap Script
 ########################################################################
 
+environment() {
+	cd service/base
+	mv Dockerfile tmp
+	sed -e "s;\(${APPLICATION^^}=\)[a-z]*;\1$ENVIRONMENT;" < tmp > Dockerfile
+	docker build --rm -t "$APPLICATION:$ENVIRONMENT" .
+	mv tmp Dockerfile
+	cd - &>/dev/null
+}
+
 initialize() {
-	docker network create "$APPLICATION"
+	NETWORK=$(docker network ls | grep -c "$APPLICATION")
+	(( $NETWORK )) || docker network create "$APPLICATION"
 	for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
-		bin/dmc -b -i "$APPLICATION" -t "$ENVIRONMENT" 2>/dev/null
+		environment
 		storage
 	done
 }
 
 storage() {
-	docker run -d -p 6379:6379 --name "$ENVIRONMENT.db" --network "$APPLICATION" -v var:/data redis:alpine
 	for DIR in ${SHARES[@]}; do
-		docker volume create --label "share=$DIR" --name "$DIR"
-		rsync -a "$DIR/" "/var/lib/docker/volumes/$DIR/_data/"
-		docker create -v "$DIR:/opt/$APPLICATION/$DIR" --name "$ENVIRONMENT.$DIR" "$APPLICATION:$ENVIRONMENT" /bin/true
+		docker volume create --name "$ENVIRONMENT-$DIR"
+		rsync -a "$DIR/" "/var/lib/docker/volumes/$ENVIRONMENT-$DIR/_data/"
+		docker create -v "$ENVIRONMENT-$DIR:/opt/$APPLICATION/$DIR" --name "$ENVIRONMENT.$DIR" "$APPLICATION:$ENVIRONMENT" /bin/true
 	done
 }
 

@@ -1,10 +1,8 @@
-FROM gurumojo:latest
+FROM gurumojo:development
 
 COPY package.json /opt/gurumojo
-
-RUN npm install
-
 COPY server.js /opt/gurumojo
+COPY node_modules /opt/gurumojo/node_modules
 COPY middleware /opt/gurumojo/middleware
 COPY route /opt/gurumojo/route
 

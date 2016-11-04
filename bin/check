@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# DMC Check Script
+########################################################################
+
+JSON=$(find . -name package.json | grep -v node_modules)
+
+for PACKAGE in ${JSON[@]}; do
+	DIR=$(dirname $PACKAGE)
+	echo "Working in $DIR ..."
+	cd $DIR
+	[ -f yarn.lock ] || yarn generate-lock-entry > yarn.lock
+	yarn check
+	yarn outdated
+	cd - &>/dev/null
+done

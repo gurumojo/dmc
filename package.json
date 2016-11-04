@@ -8,6 +8,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "fixture": "node lib/data/fixture.js",
     "start": "bin/start",
     "test": "bin/test"
   },

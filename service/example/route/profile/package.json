@@ -1,5 +1,5 @@
 {
-  "name": "login",
+  "name": "profile",
   "version": "0.0.0",
   "description": "Service Route Handler",
   "main": "index.js",

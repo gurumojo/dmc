@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# DMC Install Script
+########################################################################
+
+[ "$1" == "-f" ] && FORCE=true
+
+JSON=$(find . -name package.json | grep -v node_modules)
+
+for PACKAGE in ${JSON[@]}; do
+	DIR=$(dirname $PACKAGE)
+	echo "Working in $DIR ..."
+	cd $DIR
+	if [ "$FORCE" == "true" ]; then
+		yarn --force
+	else
+		yarn
+	fi
+	cd - &>/dev/null
+done

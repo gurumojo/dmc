@@ -92,6 +92,12 @@ query() {
 		docker volume inspect "$VOLUME"
 	fi
 	echo
+	if [ -n "$VERBOSE" ]; then
+		docker network ls
+	else
+		docker network ls | grep -e NETWORK -e "$APPLICATION"
+	fi
+	echo
 	docker ps -a
 	echo
 }

@@ -1,0 +1,12 @@
+version: "2"
+services:
+  core:
+    environment:
+      TERM: linux
+    networks:
+      - api
+      - data
+    volumes:
+      - etc:/opt/gurumojo/etc:ro
+      - lib:/opt/gurumojo/lib:ro
+      - opt:/opt/gurumojo/opt:ro

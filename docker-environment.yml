@@ -1,0 +1,32 @@
+version: "2"
+services:
+  development:
+    build:
+      context: ./service/base
+    environment:
+      GURUMOJO: development
+      WAIT_FOR_HOST:
+    extends:
+      file: docker-service.yml
+      service: core
+    image: gurumojo:development
+  #integration:
+  #  build:
+  #    context: ./service/base
+  #  environment:
+  #    GURUMOJO: integration
+  #    WAIT_FOR_HOST:
+  #  extends:
+  #    file: docker-service.yml
+  #    service: core
+  #  image: gurumojo:integration
+  #production:
+  #  build:
+  #    context: ./service/base
+  #  environment:
+  #    GURUMOJO: production
+  #    WAIT_FOR_HOST:
+  #  extends:
+  #    file: docker-service.yml
+  #    service: core
+  #  image: gurumojo:production

@@ -12,13 +12,14 @@ const logger = require('./lib/logger');
 const partial = require('lodash/partial');
 const passport = require('./lib/session');
 const pick = require('lodash/pick');
+const process = require('process');
 const readdir = require('fs').readdirSync;
 
 const DISCOVERY_BLACKLIST = ['Dockerfile', 'etc', 'lib', 'node_modules'];
 const FAVICON_PATH = `${__dirname}/etc/favicon.png`;
-const PORT = 80;
+const PORT = process.env.GURUMOJO_SERVICE_PORT || 80;
 const REQUEST_WHITELIST = ['method', 'path', 'query', 'body', 'headers', 'sessionID'];
-const SESSION_SECRET = 'y0uRbl00Dt4st3Slik3$yruP';
+const SECRET = process.env.GURUMOJO_SESSION_SECRET || 'y0uRbl00Dt4st3Slik3$yruP';
 const STATIC_PATH = `${__dirname}/etc/public`;
 
 
@@ -82,7 +83,7 @@ service.use(flash());
 service.use(expressSession({
 	resave: false,
 	saveUninitialized: false,
-	secret: SESSION_SECRET
+	secret: SECRET
 }));
 
 service.use(passport.initialize());
@@ -109,8 +110,9 @@ service.get('/*', (request, response) => {
 	`);
 });
 
+logger.level('debug');
+logger.debug('Inilializing service...');
 service.listen(PORT, () => {
-	logger.level('debug');
 	logger.info('init', {
 		application: config.application,
 		uri: `http://${hostname}:${PORT}/`

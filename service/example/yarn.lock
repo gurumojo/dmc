@@ -268,7 +268,13 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-debug@^2.2.0, debug@~2.2.0:
+debug@^2.2.0:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.3.2.tgz#94cb466ef7d6d2c7e5245cdd6e4104f2d0d70d30"
+  dependencies:
+    ms "0.7.2"
+
+debug@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
   dependencies:
@@ -465,8 +471,8 @@ forever-agent@~0.6.1:
   resolved "https://registry.yarnpkg.com/forever-agent/-/forever-agent-0.6.1.tgz#fbc71f0c41adeb37f96c577ad1ed42d8fdacca91"
 
 form-data@~2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.1.1.tgz#4adf0342e1a79afa1e84c8c320a9ffc82392a1f3"
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.1.2.tgz#89c3534008b97eada4cbb157d58f6f5df025eae4"
   dependencies:
     asynckit "^0.4.0"
     combined-stream "^1.0.5"
@@ -747,7 +753,7 @@ is-number@^2.0.2, is-number@^2.1.0:
 
 is-posix-bracket@^0.1.0:
   version "0.1.1"
-  resolved "https://registry.yarnpkg.com/is-posix-bracket/-/is-posix-bracket-0.1.1.tgz#3334dc79774368e92f016e6fbc0a88f5cd6e6bc4"
+  resolved "http://registry.npmjs.org/is-posix-bracket/-/is-posix-bracket-0.1.1.tgz#3334dc79774368e92f016e6fbc0a88f5cd6e6bc4"
 
 is-primitive@^2.0.0:
   version "2.0.0"
@@ -970,6 +976,10 @@ mkdirp@^0.5.0, "mkdirp@>=0.5 0", mkdirp@~0.5.1:
 ms@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
+
+ms@0.7.2:
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.2.tgz#ae25cf2512b3885a1d95d7f037868d8431124765"
 
 nan@^2.3.0:
   version "2.4.0"
@@ -1223,7 +1233,19 @@ read-all-stream@^3.0.0:
     pinkie-promise "^2.0.0"
     readable-stream "^2.0.0"
 
-readable-stream@^2.0.0, "readable-stream@^2.0.0 || ^1.1.13", readable-stream@^2.0.2, readable-stream@~2.1.4:
+readable-stream@^2.0.0, "readable-stream@^2.0.0 || ^1.1.13", readable-stream@^2.0.2:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.1.tgz#c459a6687ad6195f936b959870776edef27a7655"
+  dependencies:
+    buffer-shims "^1.0.0"
+    core-util-is "~1.0.0"
+    inherits "~2.0.1"
+    isarray "~1.0.0"
+    process-nextick-args "~1.0.6"
+    string_decoder "~0.10.x"
+    util-deprecate "~1.0.1"
+
+readable-stream@~2.1.4:
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.1.5.tgz#66fa8b720e1438b364681f2ad1a63c618448c9d0"
   dependencies:
@@ -1246,7 +1268,7 @@ readdirp@^2.0.0:
 
 regex-cache@^0.4.2:
   version "0.4.3"
-  resolved "https://registry.yarnpkg.com/regex-cache/-/regex-cache-0.4.3.tgz#9b1a6c35d4d0dfcef5711ae651e8e9d3d7114145"
+  resolved "http://registry.npmjs.org/regex-cache/-/regex-cache-0.4.3.tgz#9b1a6c35d4d0dfcef5711ae651e8e9d3d7114145"
   dependencies:
     is-equal-shallow "^0.1.3"
     is-primitive "^2.0.0"
@@ -1396,8 +1418,8 @@ sshpk@^1.7.0:
     tweetnacl "~0.14.0"
 
 "statuses@>= 1.3.0 < 2", statuses@~1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.3.0.tgz#8e55758cb20e7682c1f4fce8dcab30bf01d1e07a"
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.3.1.tgz#faf51b9eb74aaef3b3acf4ad5f61abf24cb7b93e"
 
 stream-combiner@~0.0.4:
   version "0.0.4"

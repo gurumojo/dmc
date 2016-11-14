@@ -1,0 +1,16 @@
+#!/bin/bash -e
+#
+# DMC Down Script
+########################################################################
+
+# source configuration
+. bin/env
+
+# stop application
+docker-compose down
+
+# stop subordinate services
+docker-compose -f docker-dependency.yml down
+
+# stop private network
+docker network rm "$APPLICATION"

@@ -1,0 +1,36 @@
+version: "2"
+networks:
+  gurumojo:
+    external: true
+volumes:
+  #arangodb:
+  #  external: true
+  #rabbitmq:
+  #  external: true
+  redis:
+    external: true
+services:
+  #arangodb:
+  #  expose:
+  #    - 8529
+  #  image: arangodb:alpine
+  #  networks:
+  #    - private
+  #  volumes:
+  #    - arangodb:/var/lib/arangodb3
+  #rabbitmq:
+  #  expose:
+  #    - 15672
+  #  image: rabbitmq:alpine
+  #  networks:
+  #    - private
+  #  volumes:
+  #    - rabbitmq:/var/lib/rabbitmq
+  redis:
+    expose:
+      - 6379
+    image: gurumojo:redis
+    networks:
+      - gurumojo
+    volumes:
+      - redis:/data

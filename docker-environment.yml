@@ -1,32 +1,44 @@
 version: "2"
+networks:
+  gurumojo:
+    external: true
+volumes:
+  etc:
+    external: true
+  lib:
+    external: true
+  redis:
+    external: true
 services:
+  local-node:
+    build:
+      context: ./service/node
+    image: gurumojo:node
+  local-redis:
+    build:
+      context: ./service/redis
+    image: gurumojo:redis
   development:
     build:
       context: ./service/base
-    environment:
-      GURUMOJO: development
-      WAIT_FOR_HOST:
     extends:
       file: docker-service.yml
-      service: core
+      service: base
+    environment:
+      GURUMOJO_REDIS_EXPOSE: 6379
+      GURUMOJO_REDIS_HOSTNAME: dmc_redis_1
     image: gurumojo:development
   #integration:
   #  build:
   #    context: ./service/base
-  #  environment:
-  #    GURUMOJO: integration
-  #    WAIT_FOR_HOST:
   #  extends:
   #    file: docker-service.yml
-  #    service: core
+  #    service: base
   #  image: gurumojo:integration
   #production:
   #  build:
   #    context: ./service/base
-  #  environment:
-  #    GURUMOJO: production
-  #    WAIT_FOR_HOST:
   #  extends:
   #    file: docker-service.yml
-  #    service: core
+  #    service: base
   #  image: gurumojo:production

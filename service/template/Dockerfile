@@ -1,4 +1,4 @@
-FROM gurumojo:latest
+FROM gurumojo:development
 
 COPY package.json /opt/gurumojo/
 COPY server.js /opt/gurumojo/

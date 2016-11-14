@@ -1,61 +1,28 @@
 version: "2"
 networks:
-  api:
-    driver: bridge
-  data:
-    driver: bridge
+  gurumojo:
+    external: true
 volumes:
   etc:
-    driver: local
+    external: true
   lib:
-    driver: local
-  opt:
-    driver: local
-  var:
-    driver: local
-services:
-  development:
-    extends:
-      file: docker-environment.yml
-      service: development
-  #integration:
-  #  extends:
-  #    file: docker-environment.yml
-  #    service: integration
-  #production:
-  #  extends:
-  #    file: docker-environment.yml
-  #    service: production
-  #arangodb:
-  #  image: arangodb:alpine
-  #  networks:
-  #    - data
-  #  ports:
-  #    - 8529:8529
-  #  volumes:
-  #    - var-arangodb:/var/lib/arangodb3
-  #rabbitmq:
-  #  image: rabbitmq:alpine
-  #  networks:
-  #    - data
-  #  ports:
-  #    - 15672:15672
-  #  volumes:
-  #    - var-rabbitmq:/var/lib/rabbitmq
+    external: true
   redis:
-    image: redis:alpine
-    networks:
-      - data
+    external: true
+services:
+  redis:
+    extends:
+      file: docker-dependency.yml
+      service: redis
     ports:
       - 6379:6379
-    volumes:
-      - var:/data
   template:
     build:
       context: ./service/template
     depends_on:
       - redis
     extends:
+      file: docker-environment.yml
       service: development
     image: template:development
     ports:
@@ -65,9 +32,8 @@ services:
   example:
     build:
       context: ./service/example
-    depends_on:
-      - redis
     extends:
+      file: docker-environment.yml
       service: development
     image: example:development
     ports:

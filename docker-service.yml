@@ -1,12 +1,14 @@
 version: "2"
 services:
-  core:
+  environment:
     environment:
+      GURUMOJO_ENVIRONMENT: development
       TERM: linux
     networks:
-      - api
-      - data
+      - gurumojo
+  base:
+    extends:
+      service: environment
     volumes:
-      - etc:/opt/gurumojo/etc:ro
-      - lib:/opt/gurumojo/lib:ro
-      - opt:/opt/gurumojo/opt:ro
+      - etc:/opt/gurumojo/etc:rw
+      - lib:/opt/gurumojo/lib:rw

@@ -1,0 +1,17 @@
+#!/bin/bash -e
+#
+# DMC Up Script
+########################################################################
+
+# source configuration
+. bin/env
+
+# start private network
+NETWORK=$(docker network ls | grep -c "$APPLICATION") || true
+(( $NETWORK )) || docker network create "$APPLICATION"
+
+# start subordinate services
+docker-compose -f docker-dependency.yml up -d --remove-orphans
+
+# start application
+docker-compose up -d

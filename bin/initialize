@@ -1,0 +1,64 @@
+#!/bin/bash -e
+#
+# DMC Bootstrap Script
+########################################################################
+
+#archive() {
+#	[ -n "$VERBOSE" ] && echo "docker cp dmc_${SHARE}_1:/opt/gurumojo/$SHARE/ - > var/$SHARE.tar"
+#	docker cp "dmc_${SHARE}_1:/opt/gurumojo/$SHARE/" - > "var/$SHARE.tar"
+#}
+#
+#import() {
+#	rm -f "var/$SHARE.tar"
+#	tar cf "var/$SHARE.tar" "$SHARE"
+#	# docker cp - "dmc_${SHARE}_1:/opt/gurumojo/" < "var/$SHARE.tar"
+#	rsync -a "$SHARE/" "/var/lib/docker/volumes/dmc_$SHARE/_data/"
+#}
+
+import() {
+	[ -n "$VERBOSE" ] && echo "# docker volume create --name $SHARE"
+	docker volume create --name "$SHARE"
+	[ -n "$VERBOSE" ] && echo "# docker create -v $SHARE:$DESTINATION --name $SHARE $IMAGE /bin/true"
+	docker create -v "$SHARE:$DESTINATION" --name "$SHARE" "$IMAGE" /bin/true
+	[ -n "$VERBOSE" ] && echo "# docker run --rm --volumes-from $SHARE -v $(pwd):/host $IMAGE rsync -r $SOURCE/ $DESTINATION/"
+	docker run --rm --volumes-from "$SHARE" -v $(pwd):/host "$IMAGE" rsync -r "$SOURCE/" "$DESTINATION/"
+	[ -n "$VERBOSE" ] && echo "# docker volume inspect $SHARE" && docker volume inspect "$SHARE" || true
+}
+
+shares() {
+	if [ -n "$SHARES" ]; then
+		for SHARE in ${SHARES[@]}; do
+			if [ -n "$VERBOSE" ]; then
+				echo "Importing ./$SHARE filesystem ..."
+				SOURCE="/host/$SHARE" IMAGE="gurumojo:development" DESTINATION="/opt/gurumojo/$SHARE" import
+			else
+				SOURCE="/host/$SHARE" IMAGE="gurumojo:development" DESTINATION="/opt/gurumojo/$SHARE" import &>/dev/null
+			fi
+		done
+	fi
+}
+
+storage() {
+	if [ -n "$VERBOSE" ]; then
+		echo "Importing redis cache ..."
+		SHARE="redis" SOURCE="/host/var/redis" IMAGE="gurumojo:redis" DESTINATION="/data" import
+	else
+		SHARE="redis" SOURCE="/host/var/redis" IMAGE="gurumojo:redis" DESTINATION="/data" import &>/dev/null
+	fi
+}
+
+
+# source configuration
+. bin/env
+
+# purge containers, images, networks, volumes
+docker-compose down &>/dev/null
+docker rm $(docker ps -aq) &>/dev/null || true
+docker rmi $(docker images |grep -v -e ^REPO -e ^node -e ^redis |awk '{print $3}') &>/dev/null || true
+docker network rm $(docker network ls -q) &>/dev/null || true
+docker volume rm $(docker volume ls -q) &>/dev/null || true
+
+# build shared volume containers
+docker-compose -f docker-environment.yml build
+storage
+shares

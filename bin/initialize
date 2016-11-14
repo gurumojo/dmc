@@ -3,25 +3,13 @@
 # DMC Bootstrap Script
 ########################################################################
 
-#archive() {
-#	[ -n "$VERBOSE" ] && echo "docker cp dmc_${SHARE}_1:/opt/gurumojo/$SHARE/ - > var/$SHARE.tar"
-#	docker cp "dmc_${SHARE}_1:/opt/gurumojo/$SHARE/" - > "var/$SHARE.tar"
-#}
-#
-#import() {
-#	rm -f "var/$SHARE.tar"
-#	tar cf "var/$SHARE.tar" "$SHARE"
-#	# docker cp - "dmc_${SHARE}_1:/opt/gurumojo/" < "var/$SHARE.tar"
-#	rsync -a "$SHARE/" "/var/lib/docker/volumes/dmc_$SHARE/_data/"
-#}
-
 import() {
 	[ -n "$VERBOSE" ] && echo "# docker volume create --name $SHARE"
 	docker volume create --name "$SHARE"
 	[ -n "$VERBOSE" ] && echo "# docker create -v $SHARE:$DESTINATION --name $SHARE $IMAGE /bin/true"
 	docker create -v "$SHARE:$DESTINATION" --name "$SHARE" "$IMAGE" /bin/true
 	[ -n "$VERBOSE" ] && echo "# docker run --rm --volumes-from $SHARE -v $(pwd):/host $IMAGE rsync -r $SOURCE/ $DESTINATION/"
-	docker run --rm --volumes-from "$SHARE" -v $(pwd):/host "$IMAGE" rsync -r "$SOURCE/" "$DESTINATION/"
+	docker run --rm --volumes-from "$SHARE" -v $(pwd):/host "$IMAGE" rsync -a "$SOURCE/" "$DESTINATION/"
 	[ -n "$VERBOSE" ] && echo "# docker volume inspect $SHARE" && docker volume inspect "$SHARE" || true
 }
 

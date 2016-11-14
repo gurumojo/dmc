@@ -1,0 +1,28 @@
+#!/bin/bash -e
+#
+# DMC Publish Script
+########################################################################
+
+publish() {
+	[ -n "$VERBOSE" ] && echo "# docker run --rm --volumes-from $SHARE -v $(pwd):/host $IMAGE rsync -av --delete $SOURCE/ $DESTINATION/"
+	docker run --rm --volumes-from "$SHARE" -v $(pwd):/host "$IMAGE" rsync -av --delete "$SOURCE/" "$DESTINATION/"
+}
+
+shares() {
+	if [ -n "$SHARES" ]; then
+		for SHARE in ${SHARES[@]}; do
+			if [ -n "$VERBOSE" ]; then
+				echo "Publishing ./$SHARE filesystem ..."
+				SOURCE="/host/$SHARE" IMAGE="gurumojo:development" DESTINATION="/opt/gurumojo/$SHARE" publish
+			else
+				SOURCE="/host/$SHARE" IMAGE="gurumojo:development" DESTINATION="/opt/gurumojo/$SHARE" publish &>/dev/null
+			fi
+		done
+	fi
+}
+
+
+# source configuration
+. bin/env
+
+shares

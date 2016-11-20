@@ -5,6 +5,8 @@
 
 [ -z "$APPLICATION" ] && export APPLICATION=$(jq -r '.application' etc/config.json)
 
+[ -z "$ENVIRONMENT" ] && export ENVIRONMENT=$(jq -r '.environment' etc/config.json)
+
 [ -z "$ENVIRONMENTS" ] && export ENVIRONMENTS=$(jq -r '.environments[] | select(.active).environment' etc/config.json)
 
 [ -z "$CONTAINERS" ] && export CONTAINERS=$(jq -r '(.environments[] | select(.active).environment) as $e | .containers[] | select(.tag == $e) | @json' etc/config.json) 
@@ -22,6 +24,8 @@
 if [ -n "$VERBOSE" ]; then
 	echo
 	echo "APPLICATION=$APPLICATION"
+	echo
+	echo "ENVIRONMENT=$ENVIRONMENT"
 	echo
 	echo "ENVIRONMENTS=("
 	echo "${ENVIRONMENTS[@]}"

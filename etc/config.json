@@ -1,5 +1,6 @@
 {
 	"application": "gurumojo",
+	"environment": "development",
 	"containers": [
 		{
 			"container": "c00",

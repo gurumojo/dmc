@@ -1,6 +1,5 @@
 'use strict';
 const bodyParser = require('body-parser');
-const config = require('./etc/config');
 const cookieParser = require('cookie-parser');
 const express = require('express');
 const expressSession = require('express-session');
@@ -8,12 +7,14 @@ const favicon = require('serve-favicon');
 const flash = require('connect-flash');
 const hostname = require('os').hostname();
 const includes = require('lodash/includes');
-const logger = require('./lib/logger');
 const partial = require('lodash/partial');
-const passport = require('./lib/session');
 const pick = require('lodash/pick');
 const process = require('process');
 const readdir = require('fs').readdirSync;
+
+const config = require('./etc/config');
+const logger = require('./lib/logger');
+const passport = require('./lib/session');
 
 const DISCOVERY_BLACKLIST = ['Dockerfile', 'etc', 'lib', 'node_modules'];
 const FAVICON_PATH = `${__dirname}/etc/favicon.png`;

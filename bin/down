@@ -7,10 +7,15 @@
 . bin/env
 
 # stop application
-docker-compose down
+docker-compose down -v --rmi all --remove-orphans
 
 # stop subordinate services
-docker-compose -f docker-dependency.yml down
+docker-compose -f docker-dependency.yml down -v --rmi all --remove-orphans
+#docker-compose -f "docker-$ENVIRONMENT.yml" down -v --rmi all --remove-orphans
+
+# remove application images
+docker rmi $(docker images |grep -v -e ^REPO -e node -e redis |awk '{print $3}') 2>/dev/null || true
+docker-compose -f docker-environment.yml down
 
 # stop private network
 docker network rm "$APPLICATION"

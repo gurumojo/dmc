@@ -18,9 +18,9 @@ shares() {
 		for SHARE in ${SHARES[@]}; do
 			if [ -n "$VERBOSE" ]; then
 				echo "Importing ./$SHARE filesystem ..."
-				SOURCE="/host/$SHARE" DESTINATION="/opt/gurumojo/$SHARE" IMAGE="gurumojo:development" import
-			else                                                                                     
-				SOURCE="/host/$SHARE" DESTINATION="/opt/gurumojo/$SHARE" IMAGE="gurumojo:development" import &>/dev/null
+				SOURCE="/host/$SHARE" DESTINATION="/opt/$APPLICATION/$SHARE" IMAGE="$APPLICATION:node" import
+			else
+				SOURCE="/host/$SHARE" DESTINATION="/opt/$APPLICATION/$SHARE" IMAGE="$APPLICATION:node" import &>/dev/null
 			fi
 		done
 	fi
@@ -29,9 +29,9 @@ shares() {
 storage() {
 	if [ -n "$VERBOSE" ]; then
 		echo "Importing redis cache ..."
-		SHARE="redis" SOURCE="/host/var/redis" DESTINATION="/data" IMAGE="gurumojo:redis" import
-	else                                                                                 
-		SHARE="redis" SOURCE="/host/var/redis" DESTINATION="/data" IMAGE="gurumojo:redis" import &>/dev/null
+		SHARE="redis" SOURCE="/host/var/redis" DESTINATION="/data" IMAGE="$APPLICATION:redis" import
+	else
+		SHARE="redis" SOURCE="/host/var/redis" DESTINATION="/data" IMAGE="$APPLICATION:redis" import &>/dev/null
 	fi
 }
 
@@ -39,12 +39,8 @@ storage() {
 # source configuration
 . bin/env
 
-# purge containers, images, networks, volumes
-docker-compose down &>/dev/null
-docker rm $(docker ps -aq) &>/dev/null || true
-docker rmi $(docker images |grep -v -e ^REPO -e ^node -e ^redis |awk '{print $3}') &>/dev/null || true
-docker network rm $(docker network ls -q) &>/dev/null || true
-docker volume rm $(docker volume ls -q) &>/dev/null || true
+# remove all containers, images, networks, volumes
+bin/purge
 
 # build shared volume containers
 docker-compose -f docker-environment.yml build

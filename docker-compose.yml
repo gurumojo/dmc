@@ -7,28 +7,28 @@ volumes:
     external: true
   lib:
     external: true
-  redis:
-    external: true
+  #redis:
+  #  external: true
 services:
-  redis:
-    extends:
-      file: docker-dependency.yml
-      service: redis
-    ports:
-      - 6379:6379
-  template:
-    build:
-      context: ./service/template
-    depends_on:
-      - redis
-    extends:
-      file: docker-environment.yml
-      service: development
-    image: template:development
-    ports:
-      - 7000:80
-    volumes:
-      - ./service/template:/opt/gurumojo
+  #redis:
+  #  extends:
+  #    file: docker-dependency.yml
+  #    service: redis
+  #  ports:
+  #    - 6379:6379
+  #template:
+  #  build:
+  #    context: ./service/template
+  #  depends_on:
+  #    - redis
+  #  extends:
+  #    file: docker-environment.yml
+  #    service: development
+  #  image: template:development
+  #  ports:
+  #    - 7000:80
+  #  volumes:
+  #    - ./service/template:/opt/gurumojo
   example:
     build:
       context: ./service/example

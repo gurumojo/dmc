@@ -1,48 +1,10 @@
-#!/bin/bash
+#!/bin/bash -e
 #
 # DMC Purge Script
 ########################################################################
 
-destroy() {
-	if [ -n "$CONTAINERS" ]; then
-		echo "PURGING CONTAINERS"
-		for CONTAINER in ${CONTAINERS[@]}; do
-			drop | sort -u
-		done
-	fi
-	if [ -n "$IMAGES" ]; then
-		echo "PURGING IMAGES"
-		for IMAGE in ${IMAGES[@]}; do
-			docker rmi -f "$IMAGE"
-		done
-	fi
-	if [ -n "$VOLUMES" ]; then
-		echo "PURGING VOLUMES"
-		for VOLUME in ${VOLUMES[@]}; do
-			docker volume rm "$VOLUME"
-		done
-	fi
-	if [ -n "$NETWORKS" ]; then
-		echo "PURGING NETWORKS"
-		for NETWORK in ${NETWORKS[@]}; do
-			docker network rm "$NETWORK"
-		done
-	fi
-}
-
-drop() {
-	docker kill "$CONTAINER" 2>/dev/null
-	docker rm -f "$CONTAINER"
-}
-
-search() {
-	CONTAINERS=$(docker ps -a | grep -v ^CONTAINER | awk '{print $NF}')
-	IMAGES=$(docker images | grep -v -e ^REPOSITORY -e ^node -e ^redis | awk '{print $3}')
-	VOLUMES=$(docker volume ls | grep -v ^DRIVER | awk '{print $2}')
-	NETWORKS=$(docker network ls | awk '{print $2}' | grep -v -e ^ID -e bridge -e host -e none)
-}
-
-
-# shut it down
-search && destroy
-
+# destroy containers, images, networks, volumes
+docker rm -f $(docker ps -aq) 2>/dev/null || true
+docker rmi $(docker images -aq) 2>/dev/null || true
+docker network rm $(docker network ls -q) 2>/dev/null || true
+docker volume rm $(docker volume ls -q) 2>/dev/null || true

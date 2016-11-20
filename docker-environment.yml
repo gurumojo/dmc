@@ -25,20 +25,7 @@ services:
       file: docker-service.yml
       service: base
     environment:
+      GURUMOJO_ENVIRONMENT: development
       GURUMOJO_REDIS_EXPOSE: 6379
       GURUMOJO_REDIS_HOSTNAME: dmc_redis_1
     image: gurumojo:development
-  #integration:
-  #  build:
-  #    context: ./service/base
-  #  extends:
-  #    file: docker-service.yml
-  #    service: base
-  #  image: gurumojo:integration
-  #production:
-  #  build:
-  #    context: ./service/base
-  #  extends:
-  #    file: docker-service.yml
-  #    service: base
-  #  image: gurumojo:production

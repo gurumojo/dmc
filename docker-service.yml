@@ -2,7 +2,6 @@ version: "2"
 services:
   environment:
     environment:
-      GURUMOJO_ENVIRONMENT: development
       TERM: linux
     networks:
       - gurumojo
@@ -12,3 +11,4 @@ services:
     volumes:
       - etc:/opt/gurumojo/etc
       - lib:/opt/gurumojo/lib
+      #- var:/opt/gurumojo/var

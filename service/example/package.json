@@ -19,9 +19,7 @@
     "express": "4.14.x",
     "express-session": "1.14.x",
     "lodash": "4.16.x",
+    "nodemon": "1.11.x",
     "serve-favicon": "2.3.x"
-  },
-  "devDependencies": {
-    "nodemon": "1.11.x"
   }
 }

@@ -110,8 +110,7 @@ service.get('/*', (request, response) => {
 	`);
 });
 
-logger.level('debug');
-logger.debug('Inilializing service...');
+//logger.level('debug');
 service.listen(PORT, () => {
 	logger.info('init', {
 		application: config.application,

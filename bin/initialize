@@ -18,9 +18,9 @@ shares() {
 		for SHARE in ${SHARES[@]}; do
 			if [ -n "$VERBOSE" ]; then
 				echo "Importing ./$SHARE filesystem ..."
-				SOURCE="/host/$SHARE" IMAGE="gurumojo:development" DESTINATION="/opt/gurumojo/$SHARE" import
-			else
-				SOURCE="/host/$SHARE" IMAGE="gurumojo:development" DESTINATION="/opt/gurumojo/$SHARE" import &>/dev/null
+				SOURCE="/host/$SHARE" DESTINATION="/opt/gurumojo/$SHARE" IMAGE="gurumojo:development" import
+			else                                                                                     
+				SOURCE="/host/$SHARE" DESTINATION="/opt/gurumojo/$SHARE" IMAGE="gurumojo:development" import &>/dev/null
 			fi
 		done
 	fi
@@ -29,9 +29,9 @@ shares() {
 storage() {
 	if [ -n "$VERBOSE" ]; then
 		echo "Importing redis cache ..."
-		SHARE="redis" SOURCE="/host/var/redis" IMAGE="gurumojo:redis" DESTINATION="/data" import
-	else
-		SHARE="redis" SOURCE="/host/var/redis" IMAGE="gurumojo:redis" DESTINATION="/data" import &>/dev/null
+		SHARE="redis" SOURCE="/host/var/redis" DESTINATION="/data" IMAGE="gurumojo:redis" import
+	else                                                                                 
+		SHARE="redis" SOURCE="/host/var/redis" DESTINATION="/data" IMAGE="gurumojo:redis" import &>/dev/null
 	fi
 }
 

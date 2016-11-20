@@ -10,5 +10,5 @@ services:
     extends:
       service: environment
     volumes:
-      - etc:/opt/gurumojo/etc:rw
-      - lib:/opt/gurumojo/lib:rw
+      - etc:/opt/gurumojo/etc
+      - lib:/opt/gurumojo/lib

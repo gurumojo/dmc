@@ -1,24 +1,19 @@
 #!/bin/bash -e
 #
-# DMC Environment Variables
+# DMC Environment Script
 ########################################################################
 
 [ -z "$APPLICATION" ] && export APPLICATION=$(jq -r '.application' etc/config.json)
 
 [ -z "$ENVIRONMENT" ] && export ENVIRONMENT=$(jq -r '.environment' etc/config.json)
 
-[ -z "$ENVIRONMENTS" ] && export ENVIRONMENTS=$(jq -r '.environments[] | select(.active).environment' etc/config.json)
+if [ -n "$VERBOSE" ]; then
+	DOCKER_IMAGES=$(docker images | grep -v TAG | awk '{print $1":"$2}')
 
-[ -z "$CONTAINERS" ] && export CONTAINERS=$(jq -r '(.environments[] | select(.active).environment) as $e | .containers[] | select(.tag == $e) | @json' etc/config.json) 
+	DOCKER_CONTAINERS=$(docker ps -a | grep -v COMMAND | awk '{print $NF}')
 
-[ -z "$SHARES" ] && export SHARES=$(jq -r '.shares[]' etc/config.json)
-
-
-[ -z "$DOCKER_ACTIVE" ] && export DOCKER_ACTIVE=$(docker ps | grep -v COMMAND | awk '{print $NF}')
-
-[ -z "$DOCKER_CONTAINERS" ] && export DOCKER_CONTAINERS=$(docker ps -a | grep -v COMMAND | awk '{print $NF}')
-
-[ -z "$DOCKER_IMAGES" ] && export DOCKER_IMAGES=$(docker images | grep -v TAG | awk '{print $1":"$2}')
+	DOCKER_RUNNING=$(docker ps | grep -v COMMAND | awk '{print $NF}')
+fi
 
 
 if [ -n "$VERBOSE" ]; then
@@ -27,17 +22,6 @@ if [ -n "$VERBOSE" ]; then
 	echo
 	echo "ENVIRONMENT=$ENVIRONMENT"
 	echo
-	echo "ENVIRONMENTS=("
-	echo "${ENVIRONMENTS[@]}"
-	echo ")"
-	echo
-	echo "CONTAINERS=("
-	echo "${CONTAINERS[@]}"
-	echo ")"
-	echo
-	echo "SHARES=("
-	echo "${SHARES[@]}"
-	echo ")"
 	echo
 	echo "DOCKER_IMAGES=("
 	echo "${DOCKER_IMAGES[@]}"
@@ -47,8 +31,8 @@ if [ -n "$VERBOSE" ]; then
 	echo "${DOCKER_CONTAINERS[@]}"
 	echo ")"
 	echo
-	echo "DOCKER_ACTIVE=("
-	echo "${DOCKER_ACTIVE[@]}"
+	echo "DOCKER_RUNNING=("
+	echo "${DOCKER_RUNNING[@]}"
 	echo ")"
 	echo
 fi

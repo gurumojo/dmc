@@ -1,53 +1,9 @@
 {
 	"application": "gurumojo",
 	"environment": "development",
-	"containers": [
-		{
-			"container": "c00",
-			"dependencies": "etc,lib",
-			"image": "example",
-			"port": 8000,
-			"tag": "development",
-			"volume": "example-c00"
-		},{
-			"container": "c01",
-			"image": "int",
-			"port": 8001,
-			"tag": "integration",
-			"volume": "int-c01"
-		},{
-			"container": "c02",
-			"image": "pro",
-			"port": 8002,
-			"tag": "production",
-			"volume": "pro-c02"
-		},{
-			"container": "c03",
-			"image": "pro",
-			"port": 8003,
-			"tag": "production",
-			"volume": "pro-c03"
-		}
-	],
-	"environments": [
-		{
-			"active": true,
-			"environment": "development"
-		},{
-			"active": false,
-			"environment": "integration"
-		},{
-			"active": false,
-			"environment": "production"
-		}
-	],
 	"meta": [
 		{
 			"description": "Docker Management Console"
 		}
-	],
-	"shares": [
-		"etc",
-		"lib"
 	]
 }

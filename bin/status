@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# DMC Status Script
+########################################################################
+
+[ "$1" == "-v" ] || [ "$1" == "--verbose" ] && VERBOSE=true
+
+if [ -n "$VERBOSE" ]; then
+	echo
+	echo "Docker Management Console: $COMMAND"
+	echo
+	docker info
+	echo
+fi
+
+if [ -n "$VERBOSE" ]; then
+	docker network ls
+else
+	docker network ls | grep -v -e host -e none #| awk '{}'
+fi
+echo
+
+if [ -n "$VERBOSE" ]; then
+	docker images -a
+else
+	docker images
+fi
+echo
+
+docker volume ls
+echo
+
+if [ -n "$VERBOSE" ]; then
+	docker ps -a
+else
+	docker ps
+fi
+echo

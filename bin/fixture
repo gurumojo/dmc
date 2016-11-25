@@ -1,0 +1,13 @@
+#!/bin/bash -e
+#
+# DMC Fixture Script
+########################################################################
+
+CONTAINER="$1"
+
+if [ "$CONTAINER" == "" ]; then
+	echo "USAGE: # $0 <container-name>"
+fi
+
+# load fixture data
+docker exec -it "$CONTAINER" node lib/data/fixture

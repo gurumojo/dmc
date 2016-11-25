@@ -6,7 +6,9 @@
 CONTAINER="$1"
 
 if [ "$CONTAINER" == "" ]; then
-	echo "USAGE: # $0 <container-name>"
+	echo "USAGE:"
+	echo " # $0 <container-name>"
+	exit 1
 fi
 
 # load fixture data

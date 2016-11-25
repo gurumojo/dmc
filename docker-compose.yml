@@ -9,9 +9,23 @@ volumes:
     external: true
   #var:
   #  external: true
-  redis:
-    external: true
 services:
+  #arangodb:
+  #  expose:
+  #    - 8529
+  #  image: arangodb:alpine
+  #  networks:
+  #    - gurumojo
+  #  volumes:
+  #    - ./var/arangodb:/var/lib/arangodb3
+  #rabbitmq:
+  #  expose:
+  #    - 15672
+  #  image: rabbitmq:alpine
+  #  networks:
+  #    - gurumojo
+  #  volumes:
+  #    - ./var/rabbitmq:/var/lib/rabbitmq
   redis:
     expose:
       - 6379
@@ -19,7 +33,7 @@ services:
     networks:
       - gurumojo
     volumes:
-      - redis:/data
+      - ./var/redis:/data
   #template:
   #  build:
   #    context: ./service/template

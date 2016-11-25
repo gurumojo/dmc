@@ -1,6 +1,6 @@
 {
   "name": "dmc",
-  "version": "0.2.2",
+  "version": "0.2.3-rc",
   "description": "Docker Management Console",
   "repository": {
     "type": "git",

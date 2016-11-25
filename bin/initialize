@@ -26,15 +26,6 @@ shares() {
 	fi
 }
 
-storage() {
-	if [ -n "$VERBOSE" ]; then
-		echo "Importing redis cache ..."
-		SHARE="redis" SOURCE="/host/var/redis" DESTINATION="/data" IMAGE="$APPLICATION:redis" import
-	else
-		SHARE="redis" SOURCE="/host/var/redis" DESTINATION="/data" IMAGE="$APPLICATION:redis" import &>/dev/null
-	fi
-}
-
 
 # source configuration
 . bin/env
@@ -44,5 +35,4 @@ bin/purge
 
 # build shared volume containers
 docker-compose -f docker-environment.yml build
-storage
 shares

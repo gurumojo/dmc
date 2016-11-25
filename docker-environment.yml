@@ -7,8 +7,8 @@ volumes:
     external: true
   lib:
     external: true
-  redis:
-    external: true
+  #var:
+  #  external: true
 services:
   local-node:
     build:

@@ -7,17 +7,13 @@
 VERBOSE=1 . bin/env &>/dev/null
 
 if [ "${DOCKER_VOLUMES[*]}" == "" ]; then
-	bin/initialize
+	bin/initialize || true
 fi
 
 # start private network
 NETWORK=$(docker network ls | grep -c "$APPLICATION") || true
 (( $NETWORK )) || docker network create "$APPLICATION"
-docker-compose -f docker-environment.yml build
-
-# start subordinate services
-docker-compose -f docker-dependency.yml up -d
-#docker-compose -f "docker-$ENVIRONMENT.yml" up -d
+docker-compose -f docker-environment.yml build || true
 
 # start application
 docker-compose up -d

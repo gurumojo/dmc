@@ -1,5 +1,0 @@
-# default deny
-**/*
-# white list
-!package.json
-!server.js

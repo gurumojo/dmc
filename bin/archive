@@ -1,9 +1,9 @@
 #!/bin/bash -e
 #
-# DMC Publish Script
+# DMC Archive Script
 ########################################################################
 
-publish() {
+archive() {
 	set -x
 	docker run --rm --volumes-from "$SHARE" -v "$CONTEXT:/host" "$IMAGE"\
 		rsync -av --delete "$SOURCE/" "$DESTINATION/"
@@ -20,12 +20,12 @@ if [ -n "$SHARES" ]; then
 	IMAGE="$APPLICATION:$ENVIRONMENT"
 	for SHARE in ${SHARES[@]}; do
 		if [ -n "$VERBOSE" ]; then
-			echo "Publishing ./$SHARE filesystem ..."
-			DESTINATION="/opt/$APPLICATION/$SHARE"\
-				SOURCE="/host/$SHARE" publish
+			echo "Archiving ./$SHARE filesystem ..."
+			DESTINATION="/host/$SHARE"\
+				SOURCE="/opt/$APPLICATION/$SHARE" archive
 		else
-			DESTINATION="/opt/$APPLICATION/$SHARE"\
-				SOURCE="/host/$SHARE" publish &>/dev/null
+			DESTINATION="/host/$SHARE"\
+				SOURCE="/opt/$APPLICATION/$SHARE" archive &>/dev/null
 		fi
 	done
 fi

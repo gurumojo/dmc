@@ -1,6 +1,6 @@
 {
   "name": "dmc",
-  "version": "0.1.1-rc",
+  "version": "0.2.0",
   "description": "Docker Management Console",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "fixture": "node lib/data/fixture.js",
-    "start": "bin/start",
+    "start": "bin/up",
     "test": "bin/test"
   },
   "author": "theguy@gurumojo.net",

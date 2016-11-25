@@ -62,6 +62,8 @@ Usage
 
 `./bin/env`: this file is sourced to set environment variables for other scripts
 
+`./bin/fixture`: pass a container name to (re)instate fixture data
+
 `./bin/initialize`: purge any previous artifacts and build shared filesystems
 
 `./bin/install`: loop through `./services/*` running `yarn` (optionally forced)

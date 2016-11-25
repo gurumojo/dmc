@@ -1,13 +1,12 @@
 {
 	"application": "gurumojo",
 	"environment": "development",
+	"meta": {
+		"description": "Docker Management Console",
+		"namespace": "net.gurumojo.development"
+	},
 	"shares": [
 		"etc",
 		"lib"
-	],
-	"meta": [
-		{
-			"description": "Docker Management Console"
-		}
 	]
 }

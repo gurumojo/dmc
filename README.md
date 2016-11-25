@@ -13,9 +13,9 @@ Getting Started
 ---------------
 
 * install package manager: `npm install -g yarn`
-* install dependencies: `yarn install`
-* run the tests: `yarn test`
-* fire it up: `yarn start`
+* install dependencies: `./bin/install`
+* run the tests: `./bin/test`
+* fire it up: `./bin/up`
 
 
 On the CLI
@@ -41,8 +41,8 @@ from a DMC perspective.
 
 DMC provides for shared persistent volumes to simplify configuration and
 dependency management. Anything added under the `./etc` or `./lib` directories
-is made available to any container that extends from the default definition in
-`./docker-service.yml`.
+is made available to any container that extends from the default environment
+defined in `./docker-service.yml`.
 
 
 Management
@@ -50,25 +50,36 @@ Management
 
 Historic usage of NPM commands has been replaced here by Yarn for various reasons.
 See https://yarnpkg.com/en/docs/cli/ for details on how it compares. Of special
-interest are the package caching and strict reproducible builds.
+interest are the package caching and strict reproducible builds provided on top
+of familiar package management features.
+
+Because of the architectural decision to take advantage of package caching, and
+our emphasis on ephemeral containers and thereby rapid and repeatable builds,
+typical `npm install` or even `yarn` calls are not adequate for providing
+dependencies for each microservice. Instead, we use wrapper scripts that run
+those commands for each package saved under `./services` (see `./bin/check`,
+`./bin/install`, `./bin/upgrade`). Future work will likely transition away from
+this naive approach toward more advanced usage of package and repository links.
 
 
 Usage
 -----
 
-`./bin/check`: run `yarn check` and `yarn outdated` for each `./services/*` directory
+`./bin/archive`: save shared state in a dated tarball for later reference
+
+`./bin/check`: run `yarn check` and `yarn outdated` in each `./services/*` directory
 
 `./bin/down`: run `docker-compose down` and remove all volumes, images, orphans
 
-`./bin/env`: this file is sourced to set environment variables for other scripts
+`./bin/env`: source this file to set environment variables in other scripts
 
-`./bin/fixture`: pass a container name to (re)instate fixture data
+`./bin/fixture`: pass a container name to (re)instate test fixture data
 
 `./bin/initialize`: purge any previous artifacts and build shared filesystems
 
-`./bin/install`: loop through `./services/*` running `yarn` (optionally forced)
+`./bin/install`: run `yarn` (optionally forced) in each `./services/*` directory
 
-`./bin/publish`: sync updates to shared filesystem hierarchies (docker volumes)
+`./bin/publish`: sync updates to shared (docker volume) filesystem hierarchies
 
 `./bin/purge`: delete all containers, images, networks, volumes
 
@@ -76,5 +87,5 @@ Usage
 
 `./bin/up`: run `docker-compose up -d` on dependencies and services
 
-`./bin/upgrade`: loop through `./services/*` running `yarn upgrade`
+`./bin/upgrade`: run `yarn upgrade` in each `./services/*` directory
 

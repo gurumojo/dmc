@@ -12,11 +12,11 @@ volumes:
 services:
   #local-arangodb:
   #  build:
-  #    context: ./service/arangodb
+  #    context: ./opt/arangodb
   #  image: dmc:arangodb
   local-node:
     build:
-      context: ./service/node
+      context: ./opt/node
     environment:
       GURUMOJO_ENVIRONMENT: development
       GURUMOJO_REDIS_EXPOSE: 6379
@@ -27,11 +27,11 @@ services:
     image: dmc:node
   #local-rabbitmq:
   #  build:
-  #    context: ./service/rabbitmq
+  #    context: ./opt/rabbitmq
   #  image: dmc:rabbitmq
   local-redis:
     build:
-      context: ./service/redis
+      context: ./opt/redis
     image: dmc:redis
     networks:
       - dmc

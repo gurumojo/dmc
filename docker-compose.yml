@@ -32,20 +32,9 @@ services:
       service: local-redis
     volumes:
       - ./var/redis:/data
-  #template:
-  #  build:
-  #    context: ./service/template
-  #  extends:
-  #    file: docker-environment.yml
-  #    service: local-node
-  #  image: template:development
-  #  ports:
-  #    - 7000:80
-  #  volumes:
-  #    - ./service/template:/opt/dmc
   example:
     build:
-      context: ./service/example
+      context: ./opt/example
     extends:
       file: docker-environment.yml
       service: local-node
@@ -53,4 +42,4 @@ services:
     ports:
       - 8000:80
     volumes:
-      - ./service/example:/opt/dmc
+      - ./opt/example:/opt/dmc

@@ -67,7 +67,7 @@ Usage
 
 `./bin/archive`: save shared state in a dated tarball for later reference
 
-`./bin/check`: run `yarn check` and `yarn outdated` in each `./services/*` directory
+`./bin/check`: run `yarn check` and `yarn outdated` in each `./opt/*` directory
 
 `./bin/down`: run `docker-compose down` and remove all volumes, images, orphans
 
@@ -77,7 +77,7 @@ Usage
 
 `./bin/initialize`: purge any previous artifacts and build shared filesystems
 
-`./bin/install`: run `yarn` (optionally forced) in each `./services/*` directory
+`./bin/install`: run `yarn` (optionally forced) in each `./opt/*` directory
 
 `./bin/publish`: sync updates to shared (docker volume) filesystem hierarchies
 
@@ -87,5 +87,5 @@ Usage
 
 `./bin/up`: run `docker-compose up -d` on dependencies and services
 
-`./bin/upgrade`: run `yarn upgrade` in each `./services/*` directory
+`./bin/upgrade`: run `yarn upgrade` in each `./opt/*` directory
 

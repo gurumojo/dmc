@@ -13,9 +13,9 @@ shares() {
 		for SHARE in ${SHARES[@]}; do
 			if [ -n "$VERBOSE" ]; then
 				echo "Publishing ./$SHARE filesystem ..."
-				SOURCE="/host/$SHARE" IMAGE="gurumojo:development" DESTINATION="/opt/gurumojo/$SHARE" publish
+				SOURCE="/host/$SHARE" IMAGE="$APPLICATION:$ENVIRONMENT" DESTINATION="/opt/$APPLICATION/$SHARE" publish
 			else
-				SOURCE="/host/$SHARE" IMAGE="gurumojo:development" DESTINATION="/opt/gurumojo/$SHARE" publish &>/dev/null
+				SOURCE="/host/$SHARE" IMAGE="$APPLICATION:$ENVIRONMENT" DESTINATION="/opt/$APPLICATION/$SHARE" publish &>/dev/null
 			fi
 		done
 	fi

@@ -6,7 +6,7 @@ Proof of concept work toward managing Node.js apps via Docker on AWS.
 
 TL;DR
 -----
-`npm install -g yarn && yarn install && yarn test && yarn start`
+`npm install -g yarn && ./bin/install && ./bin/test && ./bin/up`
 
 
 Getting Started

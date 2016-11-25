@@ -1,3 +1,3 @@
-FROM gurumojo:development
+FROM dmc:node
 
 CMD ["npm", "start"]

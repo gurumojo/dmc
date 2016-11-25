@@ -1,9 +1,9 @@
 {
-	"application": "gurumojo",
+	"application": "dmc",
 	"environment": "development",
 	"meta": {
 		"description": "Docker Management Console",
-		"namespace": "net.gurumojo.development"
+		"namespace": "dmc.development"
 	},
 	"shares": [
 		"etc",

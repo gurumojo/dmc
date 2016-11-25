@@ -1,6 +1,6 @@
 version: "2"
 networks:
-  gurumojo:
+  dmc:
     external: true
 volumes:
   etc:
@@ -15,7 +15,7 @@ services:
   #    - 8529
   #  image: arangodb:alpine
   #  networks:
-  #    - gurumojo
+  #    - dmc
   #  volumes:
   #    - ./var/arangodb:/var/lib/arangodb3
   #rabbitmq:
@@ -23,38 +23,34 @@ services:
   #    - 15672
   #  image: rabbitmq:alpine
   #  networks:
-  #    - gurumojo
+  #    - dmc
   #  volumes:
   #    - ./var/rabbitmq:/var/lib/rabbitmq
   redis:
-    expose:
-      - 6379
-    image: gurumojo:redis
-    networks:
-      - gurumojo
+    extends:
+      file: docker-environment.yml
+      service: local-redis
     volumes:
       - ./var/redis:/data
   #template:
   #  build:
   #    context: ./service/template
-  #  depends_on:
-  #    - redis
   #  extends:
   #    file: docker-environment.yml
-  #    service: development
+  #    service: local-node
   #  image: template:development
   #  ports:
   #    - 7000:80
   #  volumes:
-  #    - ./service/template:/opt/gurumojo
+  #    - ./service/template:/opt/dmc
   example:
     build:
       context: ./service/example
     extends:
       file: docker-environment.yml
-      service: development
+      service: local-node
     image: example:development
     ports:
       - 8000:80
     volumes:
-      - ./service/example:/opt/gurumojo
+      - ./service/example:/opt/dmc

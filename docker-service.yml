@@ -1,14 +1,11 @@
 version: "2"
 services:
-  environment:
+  base:
     environment:
       TERM: linux
     networks:
-      - gurumojo
-  base:
-    extends:
-      service: environment
+      - dmc
     volumes:
-      - etc:/opt/gurumojo/etc
-      - lib:/opt/gurumojo/lib
-      #- var:/opt/gurumojo/var
+      - etc:/opt/dmc/etc
+      - lib:/opt/dmc/lib
+      #- var:/opt/dmc/var

@@ -13,7 +13,6 @@ fi
 # start private network
 NETWORK=$(docker network ls | grep -c "$APPLICATION") || true
 (( $NETWORK )) || docker network create "$APPLICATION"
-docker-compose -f docker-environment.yml build || true
 
 # start application
 docker-compose up -d

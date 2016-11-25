@@ -4,23 +4,27 @@
 ########################################################################
 
 import() {
-	[ -n "$VERBOSE" ] && echo "# docker volume create --name $SHARE"
+	set -x
 	docker volume create --name "$SHARE"
-	[ -n "$VERBOSE" ] && echo "# docker create -v $SHARE:$DESTINATION --name $SHARE $IMAGE /bin/true"
 	docker create -v "$SHARE:$DESTINATION" --name "$SHARE" "$IMAGE" /bin/true
-	[ -n "$VERBOSE" ] && echo "# docker run --rm --volumes-from $SHARE -v $(pwd):/host $IMAGE rsync -r $SOURCE/ $DESTINATION/"
-	docker run --rm --volumes-from "$SHARE" -v $(pwd):/host "$IMAGE" rsync -a "$SOURCE/" "$DESTINATION/"
-	[ -n "$VERBOSE" ] && echo "# docker volume inspect $SHARE" && docker volume inspect "$SHARE" || true
+	docker run --rm --volumes-from "$SHARE" -v "$CONTEXT:/host" "$IMAGE"\
+		rsync -a "$SOURCE/" "$DESTINATION/"
+	set +x
+	echo
 }
 
 shares() {
 	if [ -n "$SHARES" ]; then
+		CONTEXT=$(pwd)
+		IMAGE="$APPLICATION:node"
 		for SHARE in ${SHARES[@]}; do
 			if [ -n "$VERBOSE" ]; then
 				echo "Importing ./$SHARE filesystem ..."
-				SOURCE="/host/$SHARE" DESTINATION="/opt/$APPLICATION/$SHARE" IMAGE="$APPLICATION:node" import
+				DESTINATION="/opt/$APPLICATION/$SHARE"\
+					SOURCE="/host/$SHARE" import
 			else
-				SOURCE="/host/$SHARE" DESTINATION="/opt/$APPLICATION/$SHARE" IMAGE="$APPLICATION:node" import &>/dev/null
+				DESTINATION="/opt/$APPLICATION/$SHARE"\
+					SOURCE="/host/$SHARE" import &>/dev/null
 			fi
 		done
 	fi

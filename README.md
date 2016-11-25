@@ -34,7 +34,7 @@ environment and application configuration. The minimum fields required are:
 
 Changes to those strings effect the environments cobbled together by the scripts
 found under the `./bin` directory (which make use of various `./docker-*.yml`
-configuration files). Adding a new working directory via `./service/<name>/`
+configuration files). Adding a new working directory under `./service/<name>/`
 convention and updating `./docker-compose.yml` to include the new container
 definition is all that remains to bring up a new service in a given environment
 from a DMC perspective.
@@ -57,13 +57,22 @@ Usage
 -----
 
 `./bin/check`: run `yarn check` and `yarn outdated` for each `./services/*` directory
+
 `./bin/down`: run `docker-compose down` and remove all volumes, images, orphans
+
 `./bin/env`: this file is sourced to set environment variables for other scripts
+
 `./bin/initialize`: purge any previous artifacts and build shared filesystems
+
 `./bin/install`: loop through `./services/*` running `yarn` (optionally forced)
+
 `./bin/publish`: sync updates to shared filesystem hierarchies (docker volumes)
+
 `./bin/purge`: delete all containers, images, networks, volumes
+
 `./bin/test`: kick off a test runner to exercise the system
+
 `./bin/up`: run `docker-compose up -d` on dependencies and services
+
 `./bin/upgrade`: loop through `./services/*` running `yarn upgrade`
 

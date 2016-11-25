@@ -4,7 +4,11 @@
 ########################################################################
 
 # source configuration
-. bin/env
+VERBOSE=1 . bin/env &>/dev/null
+
+if [ "${DOCKER_VOLUMES[*]}" == "" ]; then
+	bin/initialize
+fi
 
 # start private network
 NETWORK=$(docker network ls | grep -c "$APPLICATION") || true

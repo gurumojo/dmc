@@ -1,6 +1,10 @@
 {
 	"application": "gurumojo",
 	"environment": "development",
+	"shares": [
+		"etc",
+		"lib"
+	],
 	"meta": [
 		{
 			"description": "Docker Management Console"

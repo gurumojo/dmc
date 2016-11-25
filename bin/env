@@ -7,20 +7,26 @@
 
 [ -z "$ENVIRONMENT" ] && export ENVIRONMENT=$(jq -r '.environment' etc/config.json)
 
+[ -z "$SHARES" ] && export SHARES=$(jq -r '.shares[]' etc/config.json)
+
+
 if [ -n "$VERBOSE" ]; then
 	DOCKER_IMAGES=$(docker images | grep -v TAG | awk '{print $1":"$2}')
 
 	DOCKER_CONTAINERS=$(docker ps -a | grep -v COMMAND | awk '{print $NF}')
 
 	DOCKER_RUNNING=$(docker ps | grep -v COMMAND | awk '{print $NF}')
-fi
 
+	DOCKER_VOLUMES=$(docker volume ls | grep -v VOLUME | awk '{print $NF}')
 
-if [ -n "$VERBOSE" ]; then
 	echo
 	echo "APPLICATION=$APPLICATION"
 	echo
 	echo "ENVIRONMENT=$ENVIRONMENT"
+	echo
+	echo "SHARES=("
+	echo "${SHARES[@]}"
+	echo ")"
 	echo
 	echo
 	echo "DOCKER_IMAGES=("
@@ -29,6 +35,10 @@ if [ -n "$VERBOSE" ]; then
 	echo
 	echo "DOCKER_CONTAINERS=("
 	echo "${DOCKER_CONTAINERS[@]}"
+	echo ")"
+	echo
+	echo "DOCKER_VOLUMES=("
+	echo "${DOCKER_VOLUMES[@]}"
 	echo ")"
 	echo
 	echo "DOCKER_RUNNING=("

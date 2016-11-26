@@ -1,7 +1,7 @@
 Docker Management Console
 =========================
 
-Proof of concept work toward managing Node.js apps via Docker on AWS.
+Development tools for managing Node.js apps via Docker Compose.
 
 
 TL;DR
@@ -34,7 +34,7 @@ environment and application configuration. The minimum fields required are:
 
 Changes to those strings effect the environments cobbled together by the scripts
 found under the `./bin` directory (which make use of various `./docker-*.yml`
-configuration files). Adding a new working directory under `./service/<name>/`
+configuration files). Adding a new working directory under the `./opt/<name>/`
 convention and updating `./docker-compose.yml` to include the new container
 definition is all that remains to bring up a new service in a given environment
 from a DMC perspective.
@@ -54,10 +54,10 @@ interest are the package caching and strict reproducible builds provided on top
 of familiar package management features.
 
 Because of the architectural decision to take advantage of package caching, and
-our emphasis on ephemeral containers and thereby rapid and repeatable builds,
-typical `npm install` or even `yarn` calls are not adequate for providing
-dependencies for each microservice. Instead, we use wrapper scripts that run
-those commands for each package saved under `./services` (see `./bin/check`,
+an emphasis on ephemeral containers and thereby rapid and repeatable builds,
+typical `npm install` or even `yarn` calls are not adequate for providing all
+dependencies for each microservice defined. Instead, we use wrapper scripts that
+run those commands for each microservice package under `./opt` (see `./bin/check`,
 `./bin/install`, `./bin/upgrade`). Future work will likely transition away from
 this naive approach toward more advanced usage of package and repository links.
 

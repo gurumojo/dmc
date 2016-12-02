@@ -83,8 +83,8 @@ service.use(favicon(FAVICON_PATH));
 service.use(bodyParser.json());
 service.use(bodyParser.urlencoded({extended: false}))
 
-
 service.use(flash());
+
 service.use(expressSession({
 	resave: false,
 	saveUninitialized: false,

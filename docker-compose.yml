@@ -30,6 +30,8 @@ services:
     extends:
       file: docker-environment.yml
       service: local-redis
+    ports:
+      - 6379:6379
     volumes:
       - ./var/redis:/data
   example:

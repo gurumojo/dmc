@@ -6,16 +6,11 @@
     "type": "git",
     "url": "https://github.com/gurumojo/dmc"
   },
-  "main": "index.js",
   "scripts": {
     "start": "bin/up",
+    "stop": "bin/down",
     "test": "bin/test"
   },
   "author": "theguy@gurumojo.net",
-  "license": "ISC",
-  "dependencies": {
-    "bluebird": "3.4.x",
-    "lodash": "4.16.x",
-    "redis": "2.6.x"
-  }
+  "license": "ISC"
 }

@@ -38,5 +38,5 @@ shares() {
 bin/purge
 
 # build shared volume containers
-docker-compose -f docker-environment.yml build
+docker-compose -f etc/docker/environment.yml build
 shares

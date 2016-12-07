@@ -9,6 +9,13 @@ TL;DR
 `npm install -g yarn && ./bin/install && ./bin/test && ./bin/up`
 
 
+Prerequisite
+------------
+
+* `docker`
+* `docker-compose`
+
+
 Getting Started
 ---------------
 
@@ -33,9 +40,9 @@ environment and application configuration. The minimum fields required are:
 `{"application": "{String}", "environment": "{String}"}`
 
 Changes to those strings effect the environments cobbled together by the scripts
-found under the `./bin` directory (which make use of various `./docker-*.yml`
+found under the `./bin` directory (which make use of various `./etc/docker/*.yml`
 configuration files). Adding a new working directory under the `./opt/<name>/`
-convention and updating `./docker-compose.yml` to include the new container
+convention and updating `./etc/docker/compose.yml` to include the new container
 definition is all that remains to bring up a new service in a given environment
 from a DMC perspective.
 
@@ -65,7 +72,7 @@ this naive approach toward more advanced usage of package and repository links.
 Usage
 -----
 
-`./bin/archive`: save shared state in a dated tarball for later reference
+`./bin/archive`: save shared (docker volume) modifications to host filesystem
 
 `./bin/check`: run `yarn check` and `yarn outdated` in each `./opt/*` directory
 

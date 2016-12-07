@@ -15,4 +15,4 @@ NETWORK=$(docker network ls | grep -c "$APPLICATION") || true
 (( $NETWORK )) || docker network create "$APPLICATION"
 
 # start application
-docker-compose up -d
+docker-compose -f etc/docker/compose.yml up -d

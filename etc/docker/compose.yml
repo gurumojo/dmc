@@ -1,0 +1,47 @@
+version: "2"
+networks:
+  dmc:
+    external: true
+volumes:
+  etc:
+    external: true
+  lib:
+    external: true
+  #var:
+  #  external: true
+services:
+  #arangodb:
+  #  extends:
+  #    file: environment.yml
+  #    service: local-arangodb
+  #  ports:
+  #    - 8529:8529
+  #  volumes:
+  #    - ../../var/arangodb:/var/lib/arangodb3
+  #rabbitmq:
+  #  extends:
+  #    file: environment.yml
+  #    service: local-rabbitmq
+  #  ports:
+  #    - 15672:15672
+  #  volumes:
+  #    - ../../var/rabbitmq:/var/lib/rabbitmq
+  redis:
+    extends:
+      file: environment.yml
+      service: local-redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ../../var/redis:/data
+  example:
+    build:
+      context: ../../opt/example
+    extends:
+      file: environment.yml
+      service: local-node
+    image: example:development
+    ports:
+      - 8000:80
+    volumes:
+      - ../../opt/example:/opt/dmc

@@ -18,7 +18,7 @@ const passport = require('./lib/session');
 const redact = require('./lib/redact');
 
 const DISCOVERY_BLACKLIST = ['Dockerfile', 'node_modules', 'etc', 'lib', 'var'];
-const FAVICON_PATH = `${__dirname}/etc/favicon.png`;
+const FAVICON_PATH = `${__dirname}/etc/public/favicon.png`;
 const REDIS_HOSTNAME = process.env.GURUMOJO_REDIS_HOSTNAME || 'localhost';
 const REQUEST_WHITELIST = ['method', 'path', 'query', 'body', 'headers', 'sessionID'];
 const SERVICE_PORT = process.env.GURUMOJO_SERVICE_PORT || 80;

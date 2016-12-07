@@ -17,7 +17,7 @@ publish() {
 
 if [ -n "$SHARES" ]; then
 	CONTEXT=$(pwd)
-	IMAGE="$APPLICATION:$ENVIRONMENT"
+	IMAGE="$APPLICATION:node"
 	for SHARE in ${SHARES[@]}; do
 		if [ -n "$VERBOSE" ]; then
 			echo "Publishing ./$SHARE filesystem ..."

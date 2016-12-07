@@ -7,7 +7,7 @@
 . bin/env
 
 # stop application
-docker-compose down -v --rmi local --remove-orphans
+docker-compose -f etc/docker/compose.yml down -v --rmi local --remove-orphans
 
 # remove application images
 docker rmi $(docker images |grep "$ENVIRONMENT" |awk '{print $3}')

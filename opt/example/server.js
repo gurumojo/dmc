@@ -15,6 +15,7 @@ const RedisStore = require('connect-redis')(expressSession)
 const config = require('./etc/config');
 const logger = require('./lib/logger');
 const passport = require('./lib/session');
+const pubsub = require('./lib/pubsub');
 const redact = require('./lib/redact');
 
 const DISCOVERY_BLACKLIST = ['Dockerfile', 'node_modules', 'etc', 'lib', 'var'];
@@ -38,7 +39,7 @@ function discover(type, array, value) {
 	return array;
 }
 
-function loop(level, flash) {
+function dispatch(level, flash) {
 	flash.forEach(message => logger[level]('example.message', redact(message)));
 }
 
@@ -49,10 +50,14 @@ function message(request, response, next) {
     next();
 }
 
+function react(channel, message) {
+	logger.info(`${channel}.publish`, message);
+}
+
 function requestLogger(request, response, next) {
 	Object.keys(logger).forEach(method => {
 		if (response.locals[method].length) {
-			loop(method, response.locals[method]);
+			dispatch(method, response.locals[method]);
 		}
 	});
 	logger.info('example.request', redact(pick(request, REQUEST_WHITELIST)));
@@ -126,4 +131,5 @@ service.listen(SERVICE_PORT, () => {
 		application: config.application,
 		uri: `http://${hostname}:${SERVICE_PORT}/`
 	});
+	pubsub.subscribe('example', react);
 });

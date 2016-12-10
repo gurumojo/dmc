@@ -25,6 +25,7 @@ const REQUEST_WHITELIST = ['method', 'path', 'query', 'body', 'headers', 'sessio
 const SERVICE_PORT = process.env.GURUMOJO_SERVICE_PORT || 80;
 const SESSION_SECRET = process.env.GURUMOJO_SESSION_SECRET || 'y0uRbl00Dt4st3Slik3$yruP';
 const STATIC_PATH = `${__dirname}/etc/public`;
+const init = Date.now();
 
 
 function datetime(request, response, next) {
@@ -129,6 +130,7 @@ service.get('/*', (request, response) => {
 service.listen(SERVICE_PORT, () => {
 	logger.info('init', {
 		application: config.application,
+		timestamp: init,
 		uri: `http://${hostname}:${SERVICE_PORT}/`
 	});
 	pubsub.subscribe('example', react);

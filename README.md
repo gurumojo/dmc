@@ -6,6 +6,7 @@ Development tools for managing Node.js apps via Docker Compose.
 
 TL;DR
 -----
+
 `npm install -g yarn && ./bin/install && ./bin/test && ./bin/up`
 
 
@@ -25,12 +26,6 @@ Getting Started
 * fire it up: `./bin/up`
 
 
-On the CLI
-----------
-
-* see scripts in `./bin`
-
-
 Configuration
 -------------
 
@@ -39,7 +34,7 @@ environment and application configuration. The minimum fields required are:
 
 `{"application": "{String}", "environment": "{String}"}`
 
-Changes to those strings effect the environments cobbled together by the scripts
+Changes to those strings affect the environments cobbled together by the scripts
 found under the `./bin` directory (which make use of various `./etc/docker/*.yml`
 configuration files). Adding a new working directory under the `./opt/<name>/`
 convention and updating `./etc/docker/compose.yml` to include the new container
@@ -60,13 +55,13 @@ See https://yarnpkg.com/en/docs/cli/ for details on how it compares. Of special
 interest are the package caching and strict reproducible builds provided on top
 of familiar package management features.
 
-Because of the architectural decision to take advantage of package caching, and
+Because of the architectural decision to take advantage of package caching and
 an emphasis on ephemeral containers and thereby rapid and repeatable builds,
 typical `npm install` or even `yarn` calls are not adequate for providing all
 dependencies for each microservice defined. Instead, we use wrapper scripts that
 run those commands for each microservice package under `./opt` (see `./bin/check`,
 `./bin/install`, `./bin/upgrade`). Future work will likely transition away from
-this naive approach toward more advanced usage of package and repository links.
+this naive approach toward more advanced usage of image and repository links.
 
 
 Usage

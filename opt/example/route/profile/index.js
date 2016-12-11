@@ -1,6 +1,8 @@
 'use strict';
 const router = require('express').Router();
 
+const json = require('../../lib/json');
+
 
 router.get('/profile', (request, response) => {
 	if (!request.user) {
@@ -10,7 +12,7 @@ router.get('/profile', (request, response) => {
 		response.send(`
 			<div>
 				<a href="/">home</a>
-				<pre>${JSON.stringify(request.user, null, '  ')}</pre>
+				<pre>${json.pretty(request.user)}</pre>
 				<a href="/logout">logout</a>
 			</div>
 		`);

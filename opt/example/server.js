@@ -1,9 +1,12 @@
 'use strict';
+const init = Date.now();
+
 const bodyParser = require('body-parser');
 const express = require('express');
 const expressSession = require('express-session');
 const favicon = require('serve-favicon');
 const flash = require('connect-flash');
+const get = require('lodash/get');
 const hostname = require('os').hostname();
 const includes = require('lodash/includes');
 const partial = require('lodash/partial');
@@ -13,6 +16,7 @@ const readdir = require('fs').readdirSync;
 const RedisStore = require('connect-redis')(expressSession)
 
 const config = require('./etc/config');
+const json = require('./lib/json');
 const logger = require('./lib/logger');
 const passport = require('./lib/session');
 const pubsub = require('./lib/pubsub');
@@ -25,12 +29,23 @@ const REQUEST_WHITELIST = ['method', 'path', 'query', 'body', 'headers', 'sessio
 const SERVICE_PORT = process.env.GURUMOJO_SERVICE_PORT || 80;
 const SESSION_SECRET = process.env.GURUMOJO_SESSION_SECRET || 'y0uRbl00Dt4st3Slik3$yruP';
 const STATIC_PATH = `${__dirname}/etc/public`;
-const init = Date.now();
+
+logger.level(process.env.GURUMOJO_ENVIRONMENT === 'development' ? 'debug' : 'info');
 
 
 function datetime(request, response, next) {
 	request.datetime = new Date().toISOString();
 	next();
+}
+
+function delegate(channel, message) {
+	const object = json.object(message);
+	if (get(object, 'error')) {
+		logger.error('example.delegate', error);
+	}
+	if (!get(object, 'subscribe')) {
+		logger.info('example.delegate', object);
+	}
 }
 
 function discover(type, array, value) {
@@ -49,10 +64,6 @@ function message(request, response, next) {
 		response.locals[method] = request.flash(method);
 	});
     next();
-}
-
-function react(channel, message) {
-	logger.info(`${channel}.publish`, message);
 }
 
 function requestLogger(request, response, next) {
@@ -126,12 +137,11 @@ service.get('/*', (request, response) => {
 	`);
 });
 
-//logger.level('debug');
 service.listen(SERVICE_PORT, () => {
 	logger.info('init', {
 		application: config.application,
 		timestamp: init,
 		uri: `http://${hostname}:${SERVICE_PORT}/`
 	});
-	pubsub.subscribe('example', react);
+	pubsub.subscribe('example', delegate);
 });

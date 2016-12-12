@@ -1,29 +1,41 @@
 Docker Management Console
 =========================
 
-Development tools for managing Node.js apps via Docker Compose.
+Development tools for managing `node` services via `docker-compose`.
 
 
 TL;DR
 -----
 
-`npm install -g yarn && ./bin/install && ./bin/test && ./bin/up`
+`npm i -g yarn && ./bin/install && ./bin/up`
 
 
 Prerequisite
 ------------
 
+Before diving in, these dependencies must be installed:
+
 * `docker`
 * `docker-compose`
+* `jq`
 
 
 Getting Started
 ---------------
 
-* install package manager: `npm install -g yarn`
-* install dependencies: `./bin/install`
-* run the tests: `./bin/test`
+These (one optional and) three required steps should be all that is necessary to
+get a basic example service (or your awesome suite of services based on this
+framework tested and) running:
+
+* install package manager: `npm install --global yarn`
+* install local dependencies: `./bin/install`
+* run optional tests: `./bin/test`
 * fire it up: `./bin/up`
+
+The example service allows for HTTP API or Redis message publishing as means to
+submit requests. This presents options for reuse of the same service code, from
+clients such as `curl`, browsers, and apps to containers observing queues and
+direct runtime administration via `redis-cli`.
 
 
 Configuration
@@ -41,10 +53,29 @@ convention and updating `./etc/docker/compose.yml` to include the new container
 definition is all that remains to bring up a new service in a given environment
 from a DMC perspective.
 
-DMC provides for shared persistent volumes to simplify configuration and
+DMC provides for shared persistent volumes to simplify configuration and shared
 dependency management. Anything added under the `./etc` or `./lib` directories
 is made available to any container that extends from the default environment
-defined in `./docker-service.yml`.
+defined in `./etc/docker/service.yml`.
+
+To minimize thrashing caused by filesystem changes it is necessary to run the
+`./bin/publish` script to copy changes saved under various shared directories
+into their respective docker volumes. This sync triggers a nodemon watcher
+restart in a way similar to saving changes directly into a service source
+directory would restart the given service, but it does so for every dependent
+service at once.
+
+Abstraction of the various layers of a locally built docker image with a view
+toward ease of management and speed of rebuild execution currently utilize
+persistent wrapper images for any public base image used (e.g. node, redis).
+Local configuration, optimization, and upgrades may be run only as often as
+necessary on intermediate layers, resulting in easily replaceable top level
+union filesystems and Dockerfile declarations as simple as:
+```
+FROM dmc:node
+
+CMD ["npm", "start"]
+```
 
 
 Management
@@ -67,27 +98,30 @@ this naive approach toward more advanced usage of image and repository links.
 Usage
 -----
 
-`./bin/archive`: save shared (docker volume) modifications to host filesystem
+Maintenance Scripts
 
-`./bin/check`: run `yarn check` and `yarn outdated` in each `./opt/*` directory
+* run `yarn` (optionally forced) in each `./opt/*` directory: `./bin/install`
 
-`./bin/down`: run `docker-compose down` and remove all volumes, images, orphans
+* run `yarn check` and `yarn outdated` in each `./opt/*` directory: `./bin/check`
 
-`./bin/env`: source this file to set environment variables in other scripts
+* run `yarn upgrade` in each `./opt/*` directory: `./bin/upgrade`
 
-`./bin/fixture`: pass a container name to (re)instate test fixture data
+* purge any previous artifacts and build shared filesystems: `./bin/initialize`
 
-`./bin/initialize`: purge any previous artifacts and build shared filesystems
+* delete all containers, images, networks, volumes: `./bin/purge`
 
-`./bin/install`: run `yarn` (optionally forced) in each `./opt/*` directory
 
-`./bin/publish`: sync updates to shared (docker volume) filesystem hierarchies
+Workflow Scripts
 
-`./bin/purge`: delete all containers, images, networks, volumes
+* kick off a test runner to exercise the system: `./bin/test`
 
-`./bin/test`: kick off a test runner to exercise the system
+* run `docker-compose up -d` on dependencies and services: `./bin/up`
 
-`./bin/up`: run `docker-compose up -d` on dependencies and services
+* pass a container name to (re)instate test fixture data: `./bin/fixture`
 
-`./bin/upgrade`: run `yarn upgrade` in each `./opt/*` directory
+* sync updates to shared (docker volume) filesystem hierarchies: `./bin/publish`
+
+* run `docker-compose down` and remove all volumes, images, orphans: `./bin/down`
+
+* save shared (docker volume) modifications to host filesystem: `./bin/archive`
 

@@ -18,6 +18,8 @@ Before diving in, these dependencies must be installed:
 * `docker`
 * `docker-compose`
 * `jq`
+* `node`
+* `npm`
 
 
 Getting Started
@@ -27,10 +29,10 @@ These (one optional and) three required steps should be all that is necessary to
 get a basic example service (or your awesome suite of services based on this
 framework tested and) running:
 
-* install package manager: `npm install --global yarn`
-* install local dependencies: `./bin/install`
-* run optional tests: `./bin/test`
-* fire it up: `./bin/up`
+* install package manager: `$ npm install --global yarn`
+* install local dependencies: `$ ./bin/install`
+* run optional tests: `$ ./bin/test`
+* fire it up: `$ ./bin/up`
 
 The example service allows for HTTP API or Redis message publishing as means to
 submit requests. This presents options for reuse of the same service code, from
@@ -65,17 +67,25 @@ restart in a way similar to saving changes directly into a service source
 directory would restart the given service, but it does so for every dependent
 service at once.
 
-Abstraction of the various layers of a locally built docker image with a view
+Abstraction of the various layers of locally built docker images with a view
 toward ease of management and speed of rebuild execution currently utilize
-persistent wrapper images for any public base image used (e.g. node, redis).
-Local configuration, optimization, and upgrades may be run only as often as
-necessary on intermediate layers, resulting in easily replaceable top level
-union filesystems and Dockerfile declarations as simple as:
+persistent wrapper images for any public base image (e.g. node, redis). This
+allows for local configuration, optimization, and upgrades to be run only as
+often as necessary on intermediate layers, resulting in easily replaceable top
+level union filesystems and `./opt/*/Dockerfile` declarations as simple as:
 ```
 FROM dmc:node
 
 CMD ["npm", "start"]
 ```
+The conspicuous absence of any build commands may be explained by the focus of
+this library on development and test tooling. Any microservices required by an
+application have their dependencies downloaded (or plucked from a local package
+cache) by running `./bin/install`. The resulting node_modules collections are
+mounted into the working directory of containers started with `./bin/up`. Any
+`./opt/*/package.json` dependency updates will be caught in subsequent runs of
+`./bin/install` (and potentially caught by a watcher process in a container based
+on that filesystem which is set to restart the service on any local changes).
 
 
 Management
@@ -86,13 +96,14 @@ See https://yarnpkg.com/en/docs/cli/ for details on how it compares. Of special
 interest are the package caching and strict reproducible builds provided on top
 of familiar package management features.
 
-Because of the architectural decision to take advantage of package caching and
-an emphasis on ephemeral containers and thereby rapid and repeatable builds,
-typical `npm install` or even `yarn` calls are not adequate for providing all
-dependencies for each microservice defined. Instead, we use wrapper scripts that
-run those commands for each microservice package under `./opt` (see `./bin/check`,
-`./bin/install`, `./bin/upgrade`). Future work will likely transition away from
-this naive approach toward more advanced usage of image and repository links.
+An architectural decision to take advantage of package caching embraces an
+emphasis on ephemeral containers (and thereby rapid repeatable builds important
+in test environments). DMC represents a collection of services, so a typical
+`npm install` or `yarn` call is not adequate for providing dependencies here.
+Wrapper scripts run those commands for each microservice package under `./opt`
+(see `./bin/check`, `./bin/install`, `./bin/upgrade`). Future work will likely
+transition away from this naive approach toward more advanced usage of image and
+repository links.
 
 
 Usage
@@ -100,28 +111,28 @@ Usage
 
 Maintenance Scripts
 
-* run `yarn` (optionally forced) in each `./opt/*` directory: `./bin/install`
+* run `yarn` (optionally forced) in each `./opt/*` directory: `$ ./bin/install`
 
-* run `yarn check` and `yarn outdated` in each `./opt/*` directory: `./bin/check`
+* run `yarn check` and `yarn outdated` in each `./opt/*` directory: `$ ./bin/check`
 
-* run `yarn upgrade` in each `./opt/*` directory: `./bin/upgrade`
+* run `yarn upgrade` in each `./opt/*` directory: `$ ./bin/upgrade`
 
-* purge any previous artifacts and build shared filesystems: `./bin/initialize`
+* purge any previous artifacts and build shared filesystems: `$ ./bin/initialize`
 
-* delete all containers, images, networks, volumes: `./bin/purge`
+* delete all containers, images, networks, volumes: `$ ./bin/purge`
 
 
 Workflow Scripts
 
-* kick off a test runner to exercise the system: `./bin/test`
+* kick off a test runner to exercise the system: `$ ./bin/test`
 
-* run `docker-compose up -d` on dependencies and services: `./bin/up`
+* run `docker-compose up -d` on dependencies and services: `$ ./bin/up`
 
-* pass a container name to (re)instate test fixture data: `./bin/fixture`
+* pass a container name to (re)instate test fixture data: `$ ./bin/fixture`
 
-* sync updates to shared (docker volume) filesystem hierarchies: `./bin/publish`
+* sync updates to shared (docker volume) filesystem hierarchies: `$ ./bin/publish`
 
-* run `docker-compose down` and remove all volumes, images, orphans: `./bin/down`
+* run `docker-compose down` and remove all volumes, images, orphans: `$ ./bin/down`
 
-* save shared (docker volume) modifications to host filesystem: `./bin/archive`
+* save shared (docker volume) modifications to host filesystem: `$ ./bin/archive`
 

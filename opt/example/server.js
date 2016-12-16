@@ -45,6 +45,7 @@ function delegate(channel, message) {
 	}
 	if (!get(object, 'subscribe')) {
 		logger.info('example.delegate', object);
+		logger.warn(`example.${object.method}`, {pending: 'message delegation'});
 	}
 }
 
@@ -120,9 +121,9 @@ service.use(message);
 service.use(requestLogger);
 service.use(sessionLogger);
 
-readdir(`${__dirname}/middleware`)
-.reduce(partial(discover, 'middleware'),  [])
-.forEach(middleware => service.use(middleware));
+//readdir(`${__dirname}/middleware`)
+//.reduce(partial(discover, 'middleware'),  [])
+//.forEach(middleware => service.use(middleware));
 
 readdir(`${__dirname}/route`)
 .reduce(partial(discover, 'route'), [])

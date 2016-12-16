@@ -34,9 +34,6 @@ shares() {
 # source configuration
 . bin/env
 
-# remove all containers, images, networks, volumes
-bin/purge
-
 # build shared volume containers
 docker-compose -f etc/docker/environment.yml build
 shares

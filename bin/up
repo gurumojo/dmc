@@ -6,8 +6,22 @@
 # source configuration
 VERBOSE=1 . bin/env &>/dev/null
 
-if [ "${DOCKER_VOLUMES[*]}" == "" ]; then
-	bin/initialize || true
+discover() {
+	for SHARE in ${SHARES[@]}; do
+		search && return 0
+	done
+	return 1
+}
+
+search() {
+	for VOLUME in ${DOCKER_VOLUMES[@]}; do
+		[[ "$VOLUME" == "$SHARE" ]] && return 0
+	done
+	return 1
+}
+
+if [ "${SHARES[*]}" != "" ]; then
+	discover || bin/initialize
 fi
 
 # start private network

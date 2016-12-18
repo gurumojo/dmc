@@ -3,12 +3,32 @@
 # DMC Up Script
 ########################################################################
 
+discover() {
+	for SHARE in ${SHARES[@]}; do
+		search && return 0
+	done
+	return 1
+}
+
+search() {
+	for VOLUME in ${DOCKER_VOLUMES[@]}; do
+		[[ "$VOLUME" == "$SHARE" ]] && return 0
+	done
+	return 1
+}
+
+
 # source configuration
 VERBOSE=1 . bin/env &>/dev/null
 
-if [ "${DOCKER_VOLUMES[*]}" == "" ]; then
-	bin/initialize || true
+# test for shared volumes
+if [ -n "$SHARES" ]; then
+	discover || bin/initialize
 fi
+
+# test for application images
+BUILT=$(echo "$DOCKER_IMAGES" | grep -c "$APPLICATION:") || true
+(( $BUILT )) || bin/initialize
 
 # start private network
 NETWORK=$(docker network ls | grep -c "$APPLICATION") || true

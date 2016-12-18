@@ -7,7 +7,7 @@ Development tools for managing `node` services via `docker-compose`.
 TL;DR
 -----
 
-`npm i -g yarn && ./bin/install && ./bin/up`
+`npm i -g yarn && ./bin/install && ./bin/up && ./bin/status`
 
 
 Prerequisite
@@ -25,18 +25,19 @@ Before diving in, these dependencies must be installed:
 Getting Started
 ---------------
 
-These (one optional and) three required steps should be all that is necessary to
+These (two optional and) three required steps should be all that is necessary to
 get a basic example service (or your awesome suite of services based on this
 framework tested and) running:
 
 * install package manager: `$ npm install --global yarn`
 * install local dependencies: `$ ./bin/install`
 * run optional tests: `$ ./bin/test`
-* fire it up: `$ ./bin/up`
+* start services: `$ ./bin/up`
+* verify: `$ ./bin/status`
 
-The example service allows for HTTP API or Redis message publishing as means to
-submit requests. This presents options for reuse of the same service code, from
-clients such as `curl`, browsers, and apps to containers observing queues and
+The example service allows for HTTP requests or Redis message publishing as means
+to submit requests. This presents options for reuse of the same service code, from
+clients such as `curl`, browsers, and apps to containers observing queues or even
 direct runtime administration via `redis-cli`.
 
 
@@ -100,10 +101,9 @@ An architectural decision to take advantage of package caching embraces an
 emphasis on ephemeral containers (and thereby rapid repeatable builds important
 in test environments). DMC represents a collection of services, so a typical
 `npm install` or `yarn` call is not adequate for providing dependencies here.
-Wrapper scripts run those commands for each microservice package under `./opt`
-(see `./bin/check`, `./bin/install`, `./bin/upgrade`). Future work will likely
-transition away from this naive approach toward more advanced usage of image and
-repository links.
+Wrapper scripts run those commands for any package found under this project root
+(see `./bin/check`, `./bin/install`, `./bin/upgrade`). In practice, that scan
+affects the shared libraries under `./lib` and microservices under `./opt`.
 
 
 Usage
@@ -111,15 +111,17 @@ Usage
 
 Maintenance Scripts
 
-* run `yarn` (optionally forced) in each `./opt/*` directory: `$ ./bin/install`
+* run `yarn` in each `./opt/*` directory: `$ ./bin/install [-f|--force]`
 
 * run `yarn check` and `yarn outdated` in each `./opt/*` directory: `$ ./bin/check`
 
 * run `yarn upgrade` in each `./opt/*` directory: `$ ./bin/upgrade`
 
-* purge any previous artifacts and build shared filesystems: `$ ./bin/initialize`
+* build shared filesystem containers: `$ ./bin/initialize`
 
 * delete all containers, images, networks, volumes: `$ ./bin/purge`
+
+* check the current `docker-compose` environment: `$ ./bin/status [-v|--verbose]`
 
 
 Workflow Scripts
@@ -128,11 +130,11 @@ Workflow Scripts
 
 * run `docker-compose up -d` on dependencies and services: `$ ./bin/up`
 
-* pass a container name to (re)instate test fixture data: `$ ./bin/fixture`
+* pass a container name to (re)instate test fixture data: `$ ./bin/fixture <redis>`
 
 * sync updates to shared (docker volume) filesystem hierarchies: `$ ./bin/publish`
 
-* run `docker-compose down` and remove all volumes, images, orphans: `$ ./bin/down`
-
 * save shared (docker volume) modifications to host filesystem: `$ ./bin/archive`
+
+* run `docker-compose down` and remove all volumes, images, orphans: `$ ./bin/down`
 

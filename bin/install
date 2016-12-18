@@ -3,7 +3,7 @@
 # DMC Install Script
 ########################################################################
 
-[ "$1" == "-f" ] && FORCE=true
+[ "$1" == "-f" ] || [ "$1" == "--force" ] && FORCE=true
 
 JSON=$(find . -name package.json | grep -v node_modules)
 

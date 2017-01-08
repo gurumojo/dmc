@@ -1,0 +1,14 @@
+#!/bin/bash -e
+#
+# DMC Follow Script
+########################################################################
+
+[ "$1" == "-t" ] || [ "$1" == "--tail" ] && TAIL=true
+
+[ -n "$2" ] && COUNT=$2 || COUNT=0
+
+if [ "$TAIL" == "true" ]; then
+	docker-compose -f etc/docker/compose.yml logs --tail $COUNT -f
+else
+	docker-compose -f etc/docker/compose.yml logs -f
+fi

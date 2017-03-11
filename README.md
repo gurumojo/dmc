@@ -7,7 +7,7 @@ Development tools for managing `node` services via `docker-compose`.
 TL;DR
 -----
 
-`npm i -g yarn && ./bin/install && ./bin/up && ./bin/status`
+`./bin/install && ./bin/up && ./bin/status`
 
 
 Prerequisite
@@ -25,12 +25,11 @@ Before diving in, these dependencies must be installed:
 Getting Started
 ---------------
 
-These three required (and two optional) steps should be all that is necessary to
+These two required (and two optional) steps should be all that is necessary to
 get a basic example service (or your awesome suite of services based on this
 framework tested and) running:
 
-* install package manager: `$ npm install --global yarn`
-* install local dependencies: `$ ./bin/install`
+* install dependencies: `$ ./bin/install`
 * run optional tests: `$ ./bin/test`
 * start services: `$ ./bin/up`
 * verify: `$ ./bin/status`
@@ -61,13 +60,6 @@ dependency management. Anything added under the `./etc` or `./lib` directories
 is made available to any container that extends from the default environment
 defined in `./etc/docker/service.yml`.
 
-To minimize thrashing caused by filesystem changes it is necessary to run the
-`./bin/publish` script to copy changes saved under various shared directories
-into their respective docker volumes. This sync triggers a nodemon watcher
-restart in a way similar to saving changes directly into a service source
-directory would restart the given service, but it does so for every dependent
-service at once.
-
 Abstraction of the various layers of locally built docker images with a view
 toward ease of management and speed of rebuild execution currently utilize
 persistent wrapper images for any public base image (e.g. node, redis). This
@@ -89,6 +81,12 @@ The resulting node_modules collections are mounted into the working directory
 of containers started via `./bin/up`, eliminating the possibility of conflicts
 between copies. This also has the benefit of allowing local changes on that
 filesystem to restart the service via watcher process in a container.
+
+To minimize thrashing caused by filesystem changes it is necessary to run the
+`./bin/publish` script to copy changes saved under various shared directories
+into their respective docker volumes. This sync triggers a nodemon restart in a
+way similar to saving changes directly into a service source directory would
+restart the given service, but it does so for every dependent service at once.
 
 
 Management
@@ -116,11 +114,11 @@ Usage
 
 Maintenance Scripts
 
-* run `yarn` in each `./opt/*` directory: `$ ./bin/install [-f|--force]`
+* run `yarn` in each package directory: `$ ./bin/install [-f|--force]`
 
-* run `yarn check` and `yarn outdated` in each `./opt/*` directory: `$ ./bin/check`
+* run `yarn check` and `yarn outdated` in each package directory: `$ ./bin/check`
 
-* run `yarn upgrade` in each `./opt/*` directory: `$ ./bin/upgrade`
+* run `yarn upgrade` in each package directory: `$ ./bin/upgrade`
 
 * build shared filesystem containers: `$ ./bin/initialize`
 

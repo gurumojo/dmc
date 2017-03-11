@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# DMC Locate Script
+########################################################################
+
+find [a-z]*/ -name package.json | grep -v node_modules

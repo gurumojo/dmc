@@ -24,13 +24,13 @@ const redact = require('./lib/redact');
 
 const DISCOVERY_BLACKLIST = ['Dockerfile', 'node_modules', 'etc', 'lib', 'var'];
 const FAVICON_PATH = `${__dirname}/etc/public/favicon.png`;
-const REDIS_HOSTNAME = process.env.GURUMOJO_REDIS_HOSTNAME || 'localhost';
+const REDIS_HOST = process.env.DMC_REDIS_HOST || 'localhost';
 const REQUEST_WHITELIST = ['method', 'path', 'query', 'body', 'headers', 'sessionID'];
-const SERVICE_PORT = process.env.GURUMOJO_SERVICE_PORT || 80;
-const SESSION_SECRET = process.env.GURUMOJO_SESSION_SECRET || 'y0uRbl00Dt4st3Slik3$yruP';
+const SERVICE_PORT = process.env.DMC_SERVICE_PORT || 80;
+const SESSION_SECRET = process.env.DMC_SESSION_SECRET || 'y0uRbl00Dt4st3Slik3$yruP';
 const STATIC_PATH = `${__dirname}/etc/public`;
 
-logger.level(process.env.GURUMOJO_ENVIRONMENT === 'development' ? 'debug' : 'info');
+logger.level(process.env.DMC_ENVIRONMENT === 'development' ? 'debug' : 'info');
 
 
 function datetime(request, response, next) {
@@ -108,7 +108,7 @@ service.use(expressSession({
 	saveUninitialized: false,
 	secret: SESSION_SECRET,
 	store: new RedisStore({
-		host: REDIS_HOSTNAME,
+		host: REDIS_HOST,
 		prefix: 'session:',
 		ttl: 3600
 	})

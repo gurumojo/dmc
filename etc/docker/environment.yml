@@ -18,9 +18,9 @@ services:
     build:
       context: ../../opt/node
     environment:
-      GURUMOJO_ENVIRONMENT: development
-      GURUMOJO_REDIS_EXPOSE: 6379
-      GURUMOJO_REDIS_HOSTNAME: docker_redis_1
+      DMC_ENVIRONMENT: development
+      DMC_REDIS_PORT: 6379
+      DMC_REDIS_HOST: docker_redis_1
     extends:
       file: service.yml
       service: base

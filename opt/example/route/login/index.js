@@ -13,7 +13,7 @@ const form = `
 
 router.get('/login', (request, response) => {
 	if (request.user) {
-		request.flash('warn', {login: `session active for ${request.user.handle}`});
+		request.flash('warn', {login: `active session for ${request.user.handle}`});
 		response.redirect('/profile');
 	} else {
 		response.send(form);

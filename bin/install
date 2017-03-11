@@ -5,7 +5,7 @@
 
 [ "$1" == "-f" ] || [ "$1" == "--force" ] && FORCE=true
 
-JSON=$(find . -name package.json | grep -v node_modules)
+JSON=$(find [a-z]*/ -name package.json | grep -v node_modules)
 
 for PACKAGE in ${JSON[@]}; do
 	DIR=$(dirname $PACKAGE)

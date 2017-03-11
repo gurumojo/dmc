@@ -3,13 +3,22 @@
 # DMC Update Script
 ########################################################################
 
-JSON=$(find . -name package.json | grep -v node_modules)
+BIN=$(realpath $(dirname "$0"))
+
+BASE=$(dirname "$BIN")
+
+CMD="$BASE/node_modules/yarn/bin/yarn"
+
+JSON=$("$BIN/locate")
+
+npm up
 
 for PACKAGE in ${JSON[@]}; do
-	DIR=$(dirname $PACKAGE)
+	DIR=$(dirname "$PACKAGE")
 	echo "Working in $DIR ..."
-	cd $DIR
-	[ -f yarn.lock ] || yarn generate-lock-entry > yarn.lock
-	yarn upgrade
+	cd "$DIR"
+	LOCK="$BASE/$DIR/yarn.lock"
+	[ -f "$LOCK" ] || "$CMD" generate-lock-entry > "$LOCK"
+	"$CMD" upgrade
 	cd - &>/dev/null
 done

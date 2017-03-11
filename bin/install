@@ -5,16 +5,24 @@
 
 [ "$1" == "-f" ] || [ "$1" == "--force" ] && FORCE=true
 
-JSON=$(find [a-z]*/ -name package.json | grep -v node_modules)
+BIN=$(realpath $(dirname "$0"))
+
+BASE=$(dirname "$BIN")
+
+CMD="$BASE/node_modules/yarn/bin/yarn"
+
+JSON=$("$BIN/locate")
+
+npm install
 
 for PACKAGE in ${JSON[@]}; do
-	DIR=$(dirname $PACKAGE)
+	DIR=$(dirname "$PACKAGE")
 	echo "Working in $DIR ..."
-	cd $DIR
+	cd "$DIR"
 	if [ "$FORCE" == "true" ]; then
-		yarn --force
+		"$CMD" --force
 	else
-		yarn
+		"$CMD"
 	fi
 	cd - &>/dev/null
 done

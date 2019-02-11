@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "3.4.x",
-    "lodash": "4.16.x",
+    "lodash": "^4.17.11",
     "redis": "2.6.x"
   }
 }

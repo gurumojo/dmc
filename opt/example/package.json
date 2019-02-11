@@ -13,13 +13,13 @@
   "author": "theguy@gurumojo.net",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "1.15.x",
+    "body-parser": "^1.18.3",
     "connect-flash": "0.1.x",
     "connect-redis": "3.1.x",
-    "express": "4.14.x",
-    "express-session": "1.14.x",
-    "lodash": "4.16.x",
-    "nodemon": "1.11.x",
-    "serve-favicon": "2.3.x"
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "lodash": "^4.17.11",
+    "nodemon": "^1.18.10",
+    "serve-favicon": "^2.5.0"
   }
 }

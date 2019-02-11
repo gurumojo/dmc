@@ -13,7 +13,7 @@
   "author": "theguy@gurumojo.net",
   "license": "ISC",
   "dependencies": {
-    "lodash": "4.16.x",
+    "lodash": "^4.17.11",
     "passport": "0.3.x",
     "passport-http-bearer": "1.0.x",
     "passport-local": "1.0.x",
